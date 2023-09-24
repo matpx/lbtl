@@ -4,17 +4,10 @@
 #include "sokol/sokol_gfx.h"
 #include "sokol/sokol_glue.h"
 #include "sokol/sokol_log.h"
-#include "sokol/util/sokol_color.h"
 
-static void init(void) {
-  sg_setup({
-      .logger =
-          {
-              .func = slog_func,
-          },
-      .context = sapp_sgcontext(),
-  });
-}
+#include "renderer.hpp"
+
+static void init(void) { renderer::init(); }
 
 void event(const sapp_event *event) {
   if (event->type == SAPP_EVENTTYPE_KEY_DOWN &&
@@ -23,16 +16,9 @@ void event(const sapp_event *event) {
   }
 }
 
-void frame(void) {
-  sg_pass_action pass_action = {};
-  pass_action.colors[0].clear_value = SG_GRAY;
+void frame(void) { renderer::frame(); }
 
-  sg_begin_default_pass(&pass_action, sapp_width(), sapp_height());
-  sg_end_pass();
-  sg_commit();
-}
-
-void cleanup(void) { sg_shutdown(); }
+void cleanup(void) { renderer::finish(); }
 
 sapp_desc sokol_main(int argc, char *argv[]) {
   return (sapp_desc){.init_cb = init,

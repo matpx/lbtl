@@ -1,4 +1,4 @@
-@ctype mat4 hmm_mat4
+// @ctype mat4 hmm_mat4
 
 @vs vs
 uniform vs_params {
@@ -8,7 +8,8 @@ uniform vs_params {
 in vec4 position;
 
 void main() {
-    gl_Position = mvp * position;
+    // gl_Position = mvp * position;
+    gl_Position = position;
 }
 @end
 
@@ -20,4 +21,4 @@ void main() {
 }
 @end
 
-@program cube vs fs
+@program unlit vs fs
