@@ -25,7 +25,7 @@ void event(const sapp_event *event) {
 
 void frame(void) {
   sg_pass_action pass_action = {};
-  pass_action.colors[0].clear_value = SG_BLUE;
+  pass_action.colors[0].clear_value = SG_GRAY;
 
   sg_begin_default_pass(&pass_action, sapp_width(), sapp_height());
   sg_end_pass();
