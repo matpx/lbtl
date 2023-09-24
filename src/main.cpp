@@ -41,7 +41,7 @@ sapp_desc sokol_main(int argc, char *argv[]) {
                      .event_cb = event,
                      .width = 1200,
                      .height = 800,
-                     .window_title = "Triangle (sokol-app)",
+                     .window_title = "lbtl",
                      .icon =
                          {
                              .sokol_default = true,
