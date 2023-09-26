@@ -2,8 +2,13 @@
 #include "sokol/sokol_log.h"
 
 #include "renderer.hpp"
+#include "src/player.hpp"
+#include "src/world.hpp"
 
-static void init(void) { renderer::init(); }
+static void init(void) {
+  player::init();
+  renderer::init();
+}
 
 void event(const sapp_event *event) {
   if (event->type == SAPP_EVENTTYPE_KEY_DOWN &&
@@ -12,7 +17,10 @@ void event(const sapp_event *event) {
   }
 }
 
-void frame(void) { renderer::frame(); }
+void frame(void) {
+  world::update();
+  renderer::frame();
+}
 
 void cleanup(void) { renderer::finish(); }
 

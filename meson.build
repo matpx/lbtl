@@ -4,6 +4,7 @@ executable(
     [
         'src/main.cpp',
         'src/impl.cpp',
+        'src/components.hpp',
         'src/renderer.cpp',
         'src/renderer.hpp',
         'src/player.cpp',
