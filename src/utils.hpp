@@ -7,7 +7,7 @@
 
 namespace utils {
 
-void log(const char *prefix, const char *message) {
+inline void log(const char *prefix, const char *message) {
   printf("[%s] %s\n", prefix, message);
 }
 
