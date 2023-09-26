@@ -5,6 +5,7 @@
 #include "sokol/sokol_log.h"
 #include "sokol/util/sokol_color.h"
 
+#include "HandmadeMath/HandmadeMath.h"
 #include "shader/unlit.glsl.h"
 
 namespace renderer {
@@ -55,8 +56,14 @@ void frame() {
 
   sg_begin_default_pass(&pass_action, sapp_width(), sapp_height());
 
+  const vs_params_t vs_params = {
+    .mvp = HMM_M4D(1.0f),
+  };
+
   sg_apply_pipeline(unlit_pipeline);
   sg_apply_bindings(&quad_bindings);
+  sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, SG_RANGE(vs_params));
+
   sg_draw(0, 6, 1);
 
   sg_end_pass();
