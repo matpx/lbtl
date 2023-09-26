@@ -6,6 +6,10 @@ executable(
         'src/impl.cpp',
         'src/renderer.cpp',
         'src/renderer.hpp',
+        'src/player.cpp',
+        'src/player.hpp',
+        'src/world.cpp',
+        'src/world.hpp',
         'src/flecs/flecs.h',
         'src/flecs/flecs.c'
         ],
