@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
+#include <functional>
 
 namespace utils {
 
@@ -39,10 +40,13 @@ template <typename T> struct Optional {
 
   [[nodiscard]] constexpr bool has_data() const { return _has_data; }
 
-  [[nodiscard]] constexpr T get() const {
-    panic();
-
-    return _data;
+  inline void then(
+      std::function<void(T)> data, std::function<void()> nodata = [] {}) const {
+    if (_has_data) {
+      data(_data);
+    } else {
+      nodata();
+    }
   }
 };
 
