@@ -12,5 +12,10 @@ executable(
     dependencies: [
         dependency('GL'), dependency('X11'), dependency('xi'), dependency('xcursor')
     ],
-    cpp_args : ['-DHANDMADE_MATH_NO_SSE', '-DHANDMADE_MATH_USE_TURNS'],
+    cpp_args : [
+        '-DHANDMADE_MATH_NO_SSE',
+        '-DHANDMADE_MATH_USE_TURNS',
+        '-DFLECS_CUSTOM_BUILD',
+        '-DFLECS_CPP',
+    ],
 )
