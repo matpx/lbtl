@@ -60,8 +60,8 @@ void frame() {
   sg_apply_pipeline(unlit_pipeline);
 
   const HMM_Mat4 view =
-      HMM_InvGeneral(world::camera.get<comps::Transform>()->world);
-  const HMM_Mat4 proj = world::camera.get<comps::Camera>()->projection;
+      HMM_InvGeneral(world::main.camera.get<comps::Transform>()->world);
+  const HMM_Mat4 proj = world::main.camera.get<comps::Camera>()->projection;
 
   const HMM_Mat4 vp = proj * view;
 

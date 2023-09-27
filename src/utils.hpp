@@ -7,14 +7,9 @@
 
 namespace utils {
 
-inline void log(const char *prefix, const char *message) {
-  printf("[%s] %s\n", prefix, message);
-}
-
-inline void panic() {
-  log("PANIC", "aborting!");
-  std::abort();
-}
+#define LOG_INFO(...) { printf("[INFO] "); printf(__VA_ARGS__); printf("\n"); }
+#define LOG_ERROR(...) { printf("[ERROR] "); printf(__VA_ARGS__); printf("\n"); }
+#define LOG_PANIC(...) { printf("[PANIC] "); printf(__VA_ARGS__); printf("\n"); std::abort(); }
 
 template <typename T> struct Span {
   T *_ptr;
@@ -24,7 +19,7 @@ template <typename T> struct Span {
 
   [[nodiscard]] constexpr T operator[](size_t idx) {
     if (idx >= _len) {
-      panic();
+      LOG_PANIC("Span out of bounds!");
     }
 
     return _ptr[idx];
@@ -58,7 +53,7 @@ template <typename T> [[nodiscard]] constexpr Optional<T> ok(T data) {
 
 template <typename T>
 [[nodiscard]] constexpr Optional<T> error(const char *message) {
-  log("ERROR", message);
+  LOG_ERROR(message);
   return Optional<T>();
 }
 

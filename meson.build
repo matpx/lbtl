@@ -12,6 +12,8 @@ executable(
         'src/player.hpp',
         'src/world.cpp',
         'src/world.hpp',
+        'src/assets.cpp',
+        'src/assets.hpp',
         'src/flecs/flecs.h',
         'src/flecs/flecs.c'
         ],

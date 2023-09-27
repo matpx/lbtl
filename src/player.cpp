@@ -1,5 +1,6 @@
 #include "player.hpp"
 #include "src/HandmadeMath/HandmadeMath.h"
+#include "src/assets.hpp"
 #include "src/components.hpp"
 #include "src/flecs/flecs.h"
 #include "src/renderer.hpp"
@@ -26,7 +27,9 @@ void init() {
                .set(comps::Transform{.translation = HMM_V3(0, 0, -10.f)})
                .set(comps::Camera{});
 
-  world::camera = player;
+  world::main.camera = player;
+
+  assets::load_model();
 }
 
 } // namespace player
