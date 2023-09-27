@@ -2,6 +2,7 @@
 
 #include "HandmadeMath/HandmadeMath.h"
 #include "sokol/sokol_gfx.h"
+#include <cstdint>
 
 namespace components {
 
@@ -19,15 +20,19 @@ struct Transform {
 struct Camera {
   HMM_Mat4 projection;
 
-  Camera() { projection = HMM_Perspective_RH_NO(1.0f, 1.0f, 0.1f, 1000.0f); }
+  Camera() { projection = HMM_Perspective_RH_NO(0.125f, 1.0f, 0.1f, 1000.0f); }
 };
 
 struct Mesh {
+
+  struct Vertex {
+    float poitions[3];
+  };
+
+  using IndexType = uint16_t;
+
   sg_pipeline pipeline;
   sg_bindings bindings;
-
-  Mesh(sg_pipeline pipeline, sg_bindings bindings)
-      : pipeline(pipeline), bindings(bindings) {}
 };
 
 } // namespace components

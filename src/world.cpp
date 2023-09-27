@@ -4,6 +4,8 @@
 namespace world {
 
 flecs::world main;
+flecs::entity camera;
+
 
 void update() {
     auto f = main.filter<components::Transform>();

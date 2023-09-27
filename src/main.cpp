@@ -6,8 +6,8 @@
 #include "src/world.hpp"
 
 static void init(void) {
-  player::init();
   renderer::init();
+  player::init();
 }
 
 void event(const sapp_event *event) {

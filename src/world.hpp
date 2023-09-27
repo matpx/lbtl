@@ -8,5 +8,6 @@ namespace world {
 void update();
 
 extern flecs::world main;
+extern flecs::entity camera;
 
 }
