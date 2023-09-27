@@ -65,8 +65,8 @@ void frame() {
 
   const HMM_Mat4 vp = proj * view;
 
-  world::main.filter_transform_mesh.each([&](const comps::Transform &transform,
-                                             const comps::Mesh &mesh) {
+  world::main.query_transform_mesh.each([&](const comps::Transform &transform,
+                                            const comps::Mesh &mesh) {
     const HMM_Mat4 mvp = vp * transform.world;
 
     const vs_params_t vs_params = {
