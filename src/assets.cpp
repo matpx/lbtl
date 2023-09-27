@@ -33,6 +33,10 @@ void load_model() {
             LOG_PANIC("pos_attrib.type != cgltf_attribute_type_position");
           }
 
+          if (pos_attrib.data->is_sparse != 0) {
+            LOG_PANIC("pos_attrib.data->is_sparse != 0");
+          }
+
           for (int32_t i_component = 0; i_component < pos_attrib.data->count; i_component++) {
             float component_value[3];
 
