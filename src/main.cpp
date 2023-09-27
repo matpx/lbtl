@@ -18,7 +18,7 @@ void event(const sapp_event *event) {
 }
 
 void frame(void) {
-  world::update();
+  world::main.update();
   renderer::frame();
 }
 

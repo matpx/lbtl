@@ -1,13 +1,23 @@
 #pragma once
 
-#include "flecs/flecs.h"
 #include "components.hpp"
+#include "flecs/flecs.h"
 
 namespace world {
 
-void update();
+struct World : public flecs::world {
 
-extern flecs::world main;
+  flecs::filter<comps::Transform> filter_transform =
+      filter<comps::Transform>();
+
+  flecs::filter<const comps::Transform, const comps::Mesh>
+      filter_transform_mesh =
+          filter<const comps::Transform, const comps::Mesh>();
+
+  void update();
+};
+
+extern World main;
 extern flecs::entity camera;
 
-}
+} // namespace world

@@ -37,8 +37,8 @@ void init() {
   unlit_pipeline = sg_make_pipeline(unlit_pipeline_desc);
 }
 
-components::Mesh upload_mesh(const sg_range vertices, const sg_range indices) {
-  components::Mesh mesh = {};
+comps::Mesh upload_mesh(const sg_range vertices, const sg_range indices) {
+  comps::Mesh mesh = {};
 
   mesh.bindings.vertex_buffers[0] =
       sg_make_buffer(sg_buffer_desc{.data = vertices});
@@ -60,16 +60,13 @@ void frame() {
   sg_apply_pipeline(unlit_pipeline);
 
   const HMM_Mat4 view =
-      HMM_InvGeneral(world::camera.get<components::Transform>()->world);
-  const HMM_Mat4 proj = world::camera.get<components::Camera>()->projection;
+      HMM_InvGeneral(world::camera.get<comps::Transform>()->world);
+  const HMM_Mat4 proj = world::camera.get<comps::Camera>()->projection;
 
   const HMM_Mat4 vp = proj * view;
 
-  flecs::filter<const components::Transform, const components::Mesh> f =
-      world::main.filter<const components::Transform, const components::Mesh>(); // TODO
-
-  f.each([&](const components::Transform &transform,
-             const components::Mesh &mesh) {
+  world::main.filter_transform_mesh.each([&](const comps::Transform &transform,
+                                             const comps::Mesh &mesh) {
     const HMM_Mat4 mvp = vp * transform.world;
 
     const vs_params_t vs_params = {

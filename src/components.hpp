@@ -4,7 +4,7 @@
 #include "sokol/sokol_gfx.h"
 #include <cstdint>
 
-namespace components {
+namespace comps {
 
 struct Transform {
   HMM_Vec3 translation = HMM_V3(0.0f, 0.0f, 0.0f);
@@ -35,4 +35,4 @@ struct Mesh {
   sg_bindings bindings;
 };
 
-} // namespace components
+} // namespace comps

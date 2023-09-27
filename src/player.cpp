@@ -17,14 +17,14 @@ const float vertices[] = {
 const uint16_t indices[] = {0, 1, 2, 0, 2, 3};
 
 void init() {
-  components::Mesh mesh =
+  comps::Mesh mesh =
       renderer::upload_mesh(SG_RANGE(vertices), SG_RANGE(indices));
 
-  test = world::main.entity().set(components::Transform{}).set(mesh);
+  test = world::main.entity().set(comps::Transform{}).set(mesh);
 
   player = world::main.entity()
-               .set(components::Transform{.translation = HMM_V3(0, 0, -10.f)})
-               .set(components::Camera{});
+               .set(comps::Transform{.translation = HMM_V3(0, 0, -10.f)})
+               .set(comps::Camera{});
 
   world::camera = player;
 }

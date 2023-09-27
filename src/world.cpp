@@ -3,16 +3,12 @@
 
 namespace world {
 
-flecs::world main;
+World main;
 flecs::entity camera;
 
-
-void update() {
-    auto f = main.filter<components::Transform>();
-
-    f.each([](components::Transform& transform) {
-        transform.update();
-    });
+void World::update() {
+  filter_transform.each(
+      [](comps::Transform &transform) { transform.update(); });
 }
 
-}
+} // namespace world

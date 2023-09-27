@@ -6,8 +6,7 @@ namespace renderer {
 
 void init();
 
-components::Mesh
-upload_mesh(const sg_range vertices, const sg_range indices);
+comps::Mesh upload_mesh(const sg_range vertices, const sg_range indices);
 
 void frame();
 
