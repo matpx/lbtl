@@ -33,6 +33,8 @@ struct Mesh {
 
   sg_pipeline pipeline;
   sg_bindings bindings;
+
+  size_t index_count;
 };
 
 } // namespace comps

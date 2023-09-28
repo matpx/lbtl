@@ -1,6 +1,10 @@
 #include "assets.hpp"
 #include "cgltf/cgltf.h"
+#include "src/components.hpp"
+#include "src/renderer.hpp"
 #include "src/utils.hpp"
+#include "stb/stb_ds.h"
+#include "world.hpp"
 #include <cassert>
 
 namespace assets {
@@ -37,14 +41,36 @@ void load_model() {
             LOG_PANIC("pos_attrib.data->is_sparse != 0");
           }
 
+          comps::Mesh::Vertex *vertices = nullptr;
+          arrsetlen(vertices, pos_attrib.data->count);
+
           for (int32_t i_component = 0; i_component < pos_attrib.data->count; i_component++) {
-            float component_value[3];
+            comps::Mesh::Vertex vertex;
 
-            assert(cgltf_accessor_read_float(pos_attrib.data, i_component, component_value,
-                                             sizeof(component_value) / sizeof(float)));
+            cgltf_accessor_read_float(pos_attrib.data, i_component, vertex.poitions,
+                                      sizeof(vertex.poitions) / sizeof(vertex.poitions[0]));
 
-            LOG_INFO("%f", component_value[0]);
+            vertices[i_component] = vertex;
           }
+
+          const cgltf_accessor *index_access = prim.indices;
+
+          comps::Mesh::IndexType *indices = nullptr;
+          arrsetlen(indices, index_access->count);
+
+          for (int32_t i_index = 0; i_index < index_access->count; i_index++) {
+            comps::Mesh::IndexType index;
+
+            index = cgltf_accessor_read_index(index_access, i_index);
+
+            indices[i_index] = index;
+          }
+
+          comps::Mesh mesh = renderer::upload_mesh(
+              sg_range{.ptr = vertices, .size = arrlenu(vertices) * sizeof(comps::Mesh::Vertex)},
+              sg_range{.ptr = indices, .size = arrlenu(indices) * sizeof(comps::Mesh::IndexType)}, arrlenu(indices));
+
+          world::main.entity().set(comps::Transform{}).set(mesh);
         }
       }
     }
