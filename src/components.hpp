@@ -23,7 +23,7 @@ struct Camera {
   Camera() { projection = HMM_Perspective_RH_NO(0.125f, 1.0f, 0.1f, 1000.0f); }
 };
 
-struct Mesh {
+struct MeshBuffer {
 
   struct Vertex {
     float poitions[3];
@@ -33,8 +33,11 @@ struct Mesh {
 
   sg_pipeline pipeline;
   sg_bindings bindings;
+};
 
-  size_t index_count;
+struct Mesh {
+  MeshBuffer::IndexType base_vertex;
+  MeshBuffer::IndexType index_count;
 };
 
 } // namespace comps

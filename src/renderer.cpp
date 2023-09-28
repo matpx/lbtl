@@ -35,8 +35,8 @@ void init() {
   unlit_pipeline = sg_make_pipeline(unlit_pipeline_desc);
 }
 
-comps::Mesh upload_mesh(const sg_range vertices, const sg_range indices, const size_t index_count) {
-  comps::Mesh mesh = {};
+comps::MeshBuffer upload_meshbuffer(const sg_range vertices, const sg_range indices) {
+  comps::MeshBuffer mesh = {};
 
   mesh.bindings.vertex_buffers[0] = sg_make_buffer(sg_buffer_desc{.data = vertices});
 
@@ -44,8 +44,6 @@ comps::Mesh upload_mesh(const sg_range vertices, const sg_range indices, const s
       .type = SG_BUFFERTYPE_INDEXBUFFER,
       .data = indices,
   });
-
-  mesh.index_count = index_count;
 
   return mesh;
 }
@@ -63,18 +61,19 @@ void frame() {
 
   const HMM_Mat4 vp = proj * view;
 
-  world::main.query_transform_mesh.each([&](const comps::Transform &transform, const comps::Mesh &mesh) {
-    const HMM_Mat4 mvp = vp * transform.world;
+  world::main.query_transform_meshbuffer_mesh.each(
+      [&](const comps::Transform &transform, const comps::MeshBuffer &meshbuffer, const comps::Mesh mesh) {
+        const HMM_Mat4 mvp = vp * transform.world;
 
-    const vs_params_t vs_params = {
-        .mvp = mvp,
-    };
+        const vs_params_t vs_params = {
+            .mvp = mvp,
+        };
 
-    sg_apply_bindings(&mesh.bindings);
-    sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, SG_RANGE(vs_params));
+        sg_apply_bindings(&meshbuffer.bindings);
+        sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, SG_RANGE(vs_params));
 
-    sg_draw(0, mesh.index_count, 1);
-  });
+        sg_draw(mesh.base_vertex, mesh.index_count, 1);
+      });
 
   sg_end_pass();
   sg_commit();
