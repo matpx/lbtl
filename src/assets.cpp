@@ -6,6 +6,7 @@
 #include "stb/stb_ds.h"
 #include "world.hpp"
 #include <cassert>
+#include <limits>
 
 namespace assets {
 
@@ -21,17 +22,21 @@ void load_model() {
     result = cgltf_load_buffers(&options, data, path);
 
     if (result == cgltf_result_success) {
+
+      comps::Mesh::Vertex *vertices = nullptr;
+      comps::Mesh::IndexType *indices = nullptr;
+
       for (int32_t i_mesh = 0; i_mesh < data->meshes_count; i_mesh++) {
-        const cgltf_mesh &mesh = data->meshes[i_mesh];
+        const cgltf_mesh &gltf_mesh = data->meshes[i_mesh];
 
-        for (int32_t i_prim = 0; i_prim < mesh.primitives_count; i_prim++) {
-          const cgltf_primitive &prim = mesh.primitives[i_prim];
+        for (int32_t i_prim = 0; i_prim < gltf_mesh.primitives_count; i_prim++) {
+          const cgltf_primitive &gltf_prim = gltf_mesh.primitives[i_prim];
 
-          if (prim.attributes_count < 1) {
+          if (gltf_prim.attributes_count < 1) {
             LOG_PANIC("prim.attributes_count < 1");
           }
 
-          const cgltf_attribute &pos_attrib = prim.attributes[0];
+          const cgltf_attribute &pos_attrib = gltf_prim.attributes[0];
 
           if (pos_attrib.type != cgltf_attribute_type_position) {
             LOG_PANIC("pos_attrib.type != cgltf_attribute_type_position");
@@ -41,8 +46,14 @@ void load_model() {
             LOG_PANIC("pos_attrib.data->is_sparse != 0");
           }
 
-          comps::Mesh::Vertex *vertices = nullptr;
-          arrsetlen(vertices, pos_attrib.data->count);
+          const size_t last_vertices_len = arrlen(vertices);
+          const size_t new_vertices_len = last_vertices_len + pos_attrib.data->count;
+
+          if (new_vertices_len >= std::numeric_limits<comps::Mesh::IndexType>::max()) {
+            LOG_PANIC("new_vertices_len > std::numeric_limits<int>::max()");
+          }
+
+          arrsetlen(vertices, new_vertices_len);
 
           for (int32_t i_component = 0; i_component < pos_attrib.data->count; i_component++) {
             comps::Mesh::Vertex vertex;
@@ -50,28 +61,32 @@ void load_model() {
             cgltf_accessor_read_float(pos_attrib.data, i_component, vertex.poitions,
                                       sizeof(vertex.poitions) / sizeof(vertex.poitions[0]));
 
-            vertices[i_component] = vertex;
+            vertices[last_vertices_len + i_component] = vertex;
           }
 
-          const cgltf_accessor *index_access = prim.indices;
+          const cgltf_accessor *index_access = gltf_prim.indices;
 
-          comps::Mesh::IndexType *indices = nullptr;
-          arrsetlen(indices, index_access->count);
+          const size_t last_indices_len = arrlen(indices);
+          const size_t new_indices_len = last_indices_len + index_access->count;
+
+          arrsetlen(indices, new_indices_len);
 
           for (int32_t i_index = 0; i_index < index_access->count; i_index++) {
             comps::Mesh::IndexType index;
 
             index = cgltf_accessor_read_index(index_access, i_index);
 
-            indices[i_index] = index;
+            indices[last_indices_len + i_index] = index;
           }
-
-          comps::Mesh mesh = renderer::upload_mesh(
-              sg_range{.ptr = vertices, .size = arrlenu(vertices) * sizeof(comps::Mesh::Vertex)},
-              sg_range{.ptr = indices, .size = arrlenu(indices) * sizeof(comps::Mesh::IndexType)}, arrlenu(indices));
-
-          world::main.entity().set(comps::Transform{}).set(mesh);
         }
+
+        comps::Mesh mesh = renderer::upload_mesh(
+            sg_range{.ptr = vertices, .size = arrlenu(vertices) * sizeof(comps::Mesh::Vertex)},
+            sg_range{.ptr = indices, .size = arrlenu(indices) * sizeof(comps::Mesh::IndexType)}, arrlenu(indices));
+        world::main.entity().set(comps::Transform{}).set(mesh);
+
+        arrfree(vertices);
+        arrfree(indices);
       }
     }
 
