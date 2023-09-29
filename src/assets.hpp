@@ -1,7 +1,9 @@
 #pragma once
 
+#include "world.hpp"
+
 namespace assets {
 
-void load_model();
+world::Prefab* load_model();
 
 }
