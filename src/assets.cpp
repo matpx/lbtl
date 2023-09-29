@@ -24,6 +24,7 @@ world::Prefab *load_model() {
   cgltf_result result = cgltf_parse_file(&options, path, &data);
 
   if (result != cgltf_result_success) {
+    LOG_ERROR("cant open gltf")
     return nullptr;
   }
 
@@ -31,6 +32,8 @@ world::Prefab *load_model() {
 
   if (result != cgltf_result_success) {
     cgltf_free(data);
+
+    LOG_ERROR("cant open gltf buffers")
 
     return nullptr;
   }
@@ -113,7 +116,7 @@ world::Prefab *load_model() {
   arrfree(vertices);
   arrfree(indices);
 
-  world::Prefab *prefab = (world::Prefab *)malloc(sizeof(world::Prefab));
+  world::Prefab *prefab = (world::Prefab *)calloc(1, sizeof(world::Prefab));
   prefab->meshbuffer = meshbuffer;
 
   for (int32_t i_node = 0; i_node < data->scene->nodes_count; i_node++) {

@@ -12,7 +12,7 @@ struct Transform {
 
   HMM_Mat4 world;
 
-  constexpr void update() {
+  void update() {
     world = HMM_Translate(translation) * HMM_QToM4(rotation); // TODO faster
   }
 };

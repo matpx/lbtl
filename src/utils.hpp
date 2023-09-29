@@ -7,6 +7,11 @@
 
 namespace utils {
 
+#ifndef NDEBUG
+#define LOG_DEBUG(...) { printf("[DEBUG] "); printf(__VA_ARGS__); printf("\n"); }
+#else
+#define LOG_DEBUG(...) {}
+#endif
 #define LOG_INFO(...) { printf("[INFO] "); printf(__VA_ARGS__); printf("\n"); }
 #define LOG_ERROR(...) { printf("[ERROR] "); printf(__VA_ARGS__); printf("\n"); }
 #define LOG_PANIC(...) { printf("[PANIC] "); printf(__VA_ARGS__); printf("\n"); std::abort(); }

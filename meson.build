@@ -1,4 +1,11 @@
-project('lbtl', ['c', 'cpp'])
+project('lbtl', ['c', 'cpp'], default_options : ['cpp_std=c++20'])
+
+if host_machine.system() == 'windows'
+    deps = []
+else
+    deps = [dependency('GL'), dependency('X11'), dependency('xi'), dependency('xcursor')]
+endif
+
 executable(
     'lbtl',
     [
@@ -17,9 +24,7 @@ executable(
         'src/flecs/flecs.h',
         'src/flecs/flecs.c'
         ],
-    dependencies: [
-        dependency('GL'), dependency('X11'), dependency('xi'), dependency('xcursor')
-    ],
+    dependencies: deps,
     cpp_args : [
         '-DHANDMADE_MATH_NO_SSE',
         '-DHANDMADE_MATH_USE_TURNS',
