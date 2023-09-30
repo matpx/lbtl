@@ -1,7 +1,8 @@
+#include "engine.hpp"
+#include "renderer.hpp"
 #include "sokol/sokol_app.h"
 #include "sokol/sokol_log.h"
-
-#include "renderer.hpp"
+#include "src/assets.hpp"
 #include "src/player.hpp"
 #include "src/world.hpp"
 
@@ -23,7 +24,10 @@ void frame(void) {
   renderer::frame();
 }
 
-void cleanup(void) { renderer::finish(); }
+void cleanup(void) {
+  assets::finish();
+  renderer::finish();
+}
 
 sapp_desc sokol_main(int argc, char *argv[]) {
   return sapp_desc{

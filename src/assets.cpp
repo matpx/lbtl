@@ -3,29 +3,26 @@
 #include "cgltf/cgltf.h"
 #include "components.hpp"
 #include "renderer.hpp"
+#include "src/engine.hpp"
 #include "src/flecs/flecs.h"
 #include "src/world.hpp"
 #include "stb/stb_ds.h"
-#include "utils.hpp"
-#include <cassert>
 #include <cstdint>
-#include <cstdlib>
 #include <limits>
 
 namespace assets {
 
 world::Prefab **prefabs = nullptr;
 
-world::Prefab *load_model() {
-  const char *path = "../assets/glb/ships.glb";
+RESULT load_model(const char *path, world::Prefab **out_prefab) {
+  *out_prefab = nullptr;
 
   cgltf_options options = {};
   cgltf_data *data = NULL;
   cgltf_result result = cgltf_parse_file(&options, path, &data);
 
   if (result != cgltf_result_success) {
-    LOG_ERROR("cant open gltf")
-    return nullptr;
+    return results::error("can't open gltf file");
   }
 
   result = cgltf_load_buffers(&options, data, path);
@@ -33,9 +30,7 @@ world::Prefab *load_model() {
   if (result != cgltf_result_success) {
     cgltf_free(data);
 
-    LOG_ERROR("cant open gltf buffers")
-
-    return nullptr;
+    return results::error("can't open gltf buffers");
   }
 
   comps::MeshBuffer::Vertex *vertices = nullptr;
@@ -56,24 +51,28 @@ world::Prefab *load_model() {
       const cgltf_primitive &gltf_prim = gltf_mesh->primitives[i_prim];
 
       if (gltf_prim.attributes_count < 1) {
-        LOG_PANIC("prim.attributes_count < 1");
+        LOG_ERROR("prim.attributes_count < 1");
+        continue;
       }
 
       const cgltf_attribute &pos_attrib = gltf_prim.attributes[0];
 
       if (pos_attrib.type != cgltf_attribute_type_position) {
-        LOG_PANIC("pos_attrib.type != cgltf_attribute_type_position");
+        LOG_ERROR("pos_attrib.type != cgltf_attribute_type_position");
+        continue;
       }
 
       if (pos_attrib.data->is_sparse != 0) {
-        LOG_PANIC("pos_attrib.data->is_sparse != 0");
+        LOG_ERROR("pos_attrib.data->is_sparse != 0");
+        continue;
       }
 
       const size_t last_vertices_len = arrlen(vertices);
       const size_t new_vertices_len = last_vertices_len + pos_attrib.data->count;
 
       if (new_vertices_len >= std::numeric_limits<comps::MeshBuffer::IndexType>::max()) {
-        LOG_PANIC("new_vertices_len > std::numeric_limits<int>::max()");
+        LOG_ERROR("new_vertices_len > std::numeric_limits<int>::max()");
+        continue;
       }
 
       arrsetlen(vertices, new_vertices_len);
@@ -116,7 +115,7 @@ world::Prefab *load_model() {
   arrfree(vertices);
   arrfree(indices);
 
-  world::Prefab *prefab = (world::Prefab *)calloc(1, sizeof(world::Prefab));
+  world::Prefab *prefab = memory::make<world::Prefab>();
   prefab->meshbuffer = meshbuffer;
 
   for (int32_t i_node = 0; i_node < data->scene->nodes_count; i_node++) {
@@ -155,7 +154,15 @@ world::Prefab *load_model() {
 
   cgltf_free(data);
 
-  return prefab;
+  *out_prefab = prefab;
+
+  return true;
+}
+
+void finish() {
+  for (int32_t i_prefab = 0; i_prefab < arrlen(prefabs); i_prefab++) {
+    prefabs[i_prefab]->release();
+  }
 }
 
 } // namespace assets

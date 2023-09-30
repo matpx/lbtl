@@ -48,6 +48,11 @@ comps::MeshBuffer upload_meshbuffer(const sg_range vertices, const sg_range indi
   return mesh;
 }
 
+void release_meshbuffer(comps::MeshBuffer& meshbuffer) {
+  sg_destroy_buffer(meshbuffer.bindings.index_buffer);
+  sg_destroy_buffer(meshbuffer.bindings.vertex_buffers[0]);
+}
+
 void frame() {
   sg_pass_action pass_action = {};
   pass_action.colors[0].clear_value = SG_GRAY;

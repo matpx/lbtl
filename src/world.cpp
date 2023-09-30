@@ -1,7 +1,7 @@
 #include "world.hpp"
 #include "src/components.hpp"
 #include "src/flecs/flecs.h"
-#include "src/utils.hpp"
+#include "src/engine.hpp"
 #include <cstdint>
 
 namespace world {

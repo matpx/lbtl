@@ -1,9 +1,12 @@
 #pragma once
 
 #include "world.hpp"
+#include "engine.hpp"
 
 namespace assets {
 
-world::Prefab* load_model();
+RESULT load_model(const char *path, world::Prefab **out_prefab);
+
+void finish();
 
 }

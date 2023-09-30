@@ -1,5 +1,6 @@
 #pragma once
 
+#include "src/renderer.hpp"
 #include "stb/stb_ds.h"
 #include "components.hpp"
 #include "flecs/flecs.h"
@@ -17,7 +18,10 @@ struct Prefab {
   comps::MeshBuffer meshbuffer = {};
   Node *nodes = nullptr;
 
-  void release() { arrfree(nodes); }
+  void release() { 
+    renderer::release_meshbuffer(meshbuffer);
+    arrfree(nodes); 
+    }
 };
 
 struct World : public flecs::world {

@@ -16,9 +16,11 @@ void init() {
 
   world::main.camera = player;
 
-  world::Prefab *prefab = assets::load_model();
+  world::Prefab *prefab;
 
-  world::main.instantiate(prefab);
+  if (assets::load_model("./assets/glb/ships.glb", &prefab)) {
+    world::main.instantiate(prefab);
+  }
 }
 
 } // namespace player
