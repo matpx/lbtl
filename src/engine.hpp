@@ -11,7 +11,7 @@ struct DSArray {
     return _internal;
   }
 
-  constexpr T& operator[](size_t i) {
+  constexpr T& operator[](const size_t i) {
     assert(i < arrlenu(_internal));
     return _internal[i];
   }
