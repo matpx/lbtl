@@ -3,6 +3,37 @@
 #include <cstdio>
 #include <cstdlib>
 
+template<typename T>
+struct DSArray {
+  T* _internal = nullptr;
+
+  constexpr T*& get() {
+    return _internal;
+  }
+
+  constexpr T& operator[](size_t i) {
+    assert(i < arrlenu(_internal));
+    return _internal[i];
+  }
+
+  DSArray() = default;
+  DSArray(const DSArray<T>&) = delete;
+  DSArray(DSArray<T>&&) = delete;
+};
+
+template<typename T>
+struct DSMap {
+  T* _internal = nullptr;
+
+  constexpr T*& get() {
+    return _internal;
+  }
+
+  DSMap() = default;
+  DSMap(const DSMap<T>&) = delete;
+  DSMap(DSMap<T>&&) = delete;
+};
+
 #ifndef NDEBUG
 #define LOG_DEBUG(...)                                                                                                 \
   {                                                                                                                    \
