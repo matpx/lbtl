@@ -16,9 +16,9 @@ void init() {
 
   world::main.camera = player;
 
-  world::Prefab *prefab;
+  world::Prefab *prefab = nullptr;
 
-  if (assets::load_model("./assets/glb/ships.glb", &prefab)) {
+  if (assets::load_model("./assets/glb/ships.glb", prefab)) {
     world::main.instantiate(prefab);
   }
 }

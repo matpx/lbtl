@@ -12,10 +12,98 @@
 
 namespace assets {
 
+struct MeshMapKV {
+  const char *key;
+  comps::Mesh value;
+};
+
 world::Prefab **prefabs = nullptr;
 
-RESULT load_model(const char *path, world::Prefab **out_prefab) {
-  *out_prefab = nullptr;
+RESULT parse_prim(const cgltf_primitive &gltf_prim, comps::MeshBuffer::Vertex *&vertices,
+                  comps::MeshBuffer::IndexType *&indices, comps::Mesh &out_mesh) {
+  if (gltf_prim.attributes_count < 1) {
+    return results::error("prim.attributes_count < 1");
+  }
+
+  const cgltf_attribute &pos_attrib = gltf_prim.attributes[0];
+
+  if (pos_attrib.type != cgltf_attribute_type_position) {
+    return results::error("pos_attrib.type != cgltf_attribute_type_position");
+  }
+
+  if (pos_attrib.data->is_sparse != 0) {
+    return results::error("pos_attrib.data->is_sparse != 0");
+  }
+
+  const size_t last_vertices_len = arrlen(vertices);
+  const size_t new_vertices_len = last_vertices_len + pos_attrib.data->count;
+
+  if (new_vertices_len >= std::numeric_limits<comps::MeshBuffer::IndexType>::max()) {
+    return results::error("new_vertices_len > std::numeric_limits<int>::max()");
+  }
+
+  arrsetlen(vertices, new_vertices_len);
+
+  for (int32_t i_component = 0; i_component < pos_attrib.data->count; i_component++) {
+    comps::MeshBuffer::Vertex vertex;
+
+    cgltf_accessor_read_float(pos_attrib.data, i_component, vertex.poitions,
+                              sizeof(vertex.poitions) / sizeof(vertex.poitions[0]));
+
+    vertices[last_vertices_len + i_component] = vertex;
+  }
+
+  const cgltf_accessor *index_access = gltf_prim.indices;
+
+  const size_t last_indices_len = arrlen(indices);
+  const size_t new_indices_len = last_indices_len + index_access->count;
+
+  arrsetlen(indices, new_indices_len);
+
+  for (int32_t i_index = 0; i_index < index_access->count; i_index++) {
+    comps::MeshBuffer::IndexType index;
+
+    index = cgltf_accessor_read_index(index_access, i_index);
+
+    indices[last_indices_len + i_index] = index;
+  }
+
+  out_mesh = {.base_vertex = (comps::MeshBuffer::IndexType)last_indices_len,
+              .index_count = (comps::MeshBuffer::IndexType)index_access->count};
+
+  return results::ok();
+}
+
+world::Prefab::Node parse_node(const cgltf_node *gltf_node, const MeshMapKV *mesh_map) {
+  comps::Transform transform = {};
+
+  if (gltf_node->has_translation) {
+    transform.translation = HMM_V3(gltf_node->translation[0], gltf_node->translation[1], gltf_node->translation[2]);
+  }
+
+  if (gltf_node->has_rotation) {
+    transform.rotation =
+        HMM_Q(gltf_node->rotation[0], gltf_node->rotation[1], gltf_node->rotation[2], gltf_node->rotation[3]);
+  }
+
+  world::Prefab::Node node = {
+      .transform = transform,
+  };
+
+  if (gltf_node->mesh) {
+    const MeshMapKV *mesh_kv = shgetp_null(mesh_map, gltf_node->mesh->name);
+
+    if (mesh_kv) {
+      node.mesh = mesh_kv->value;
+      node.has_mesh = true;
+    }
+  }
+
+  return node;
+}
+
+RESULT load_model(const char *path, world::Prefab *&out_prefab) {
+  out_prefab = nullptr;
 
   cgltf_options options = {};
   cgltf_data *data = NULL;
@@ -38,73 +126,17 @@ RESULT load_model(const char *path, world::Prefab **out_prefab) {
 
   comps::MeshBuffer meshbuffer = {};
 
-  struct MeshMapKV {
-    const char *key;
-    comps::Mesh value;
-  };
   MeshMapKV *mesh_map = nullptr;
 
   for (int32_t i_mesh = 0; i_mesh < data->meshes_count; i_mesh++) {
     const cgltf_mesh *gltf_mesh = &data->meshes[i_mesh];
 
-    for (int32_t i_prim = 0; i_prim < gltf_mesh->primitives_count; i_prim++) {
-      const cgltf_primitive &gltf_prim = gltf_mesh->primitives[i_prim];
+    if (gltf_mesh->primitives_count > 0) {
+      comps::Mesh mesh;
 
-      if (gltf_prim.attributes_count < 1) {
-        LOG_ERROR("prim.attributes_count < 1");
-        continue;
+      if (parse_prim(gltf_mesh->primitives[0], vertices, indices, mesh)) {
+        shput(mesh_map, gltf_mesh->name, mesh);
       }
-
-      const cgltf_attribute &pos_attrib = gltf_prim.attributes[0];
-
-      if (pos_attrib.type != cgltf_attribute_type_position) {
-        LOG_ERROR("pos_attrib.type != cgltf_attribute_type_position");
-        continue;
-      }
-
-      if (pos_attrib.data->is_sparse != 0) {
-        LOG_ERROR("pos_attrib.data->is_sparse != 0");
-        continue;
-      }
-
-      const size_t last_vertices_len = arrlen(vertices);
-      const size_t new_vertices_len = last_vertices_len + pos_attrib.data->count;
-
-      if (new_vertices_len >= std::numeric_limits<comps::MeshBuffer::IndexType>::max()) {
-        LOG_ERROR("new_vertices_len > std::numeric_limits<int>::max()");
-        continue;
-      }
-
-      arrsetlen(vertices, new_vertices_len);
-
-      for (int32_t i_component = 0; i_component < pos_attrib.data->count; i_component++) {
-        comps::MeshBuffer::Vertex vertex;
-
-        cgltf_accessor_read_float(pos_attrib.data, i_component, vertex.poitions,
-                                  sizeof(vertex.poitions) / sizeof(vertex.poitions[0]));
-
-        vertices[last_vertices_len + i_component] = vertex;
-      }
-
-      const cgltf_accessor *index_access = gltf_prim.indices;
-
-      const size_t last_indices_len = arrlen(indices);
-      const size_t new_indices_len = last_indices_len + index_access->count;
-
-      arrsetlen(indices, new_indices_len);
-
-      for (int32_t i_index = 0; i_index < index_access->count; i_index++) {
-        comps::MeshBuffer::IndexType index;
-
-        index = cgltf_accessor_read_index(index_access, i_index);
-
-        indices[last_indices_len + i_index] = index;
-      }
-
-      comps::Mesh mesh = {.base_vertex = (comps::MeshBuffer::IndexType)last_indices_len,
-                          .index_count = (comps::MeshBuffer::IndexType)index_access->count};
-
-      shput(mesh_map, gltf_mesh->name, mesh);
     }
   }
 
@@ -119,33 +151,7 @@ RESULT load_model(const char *path, world::Prefab **out_prefab) {
   prefab->meshbuffer = meshbuffer;
 
   for (int32_t i_node = 0; i_node < data->scene->nodes_count; i_node++) {
-    const cgltf_node *gltf_node = data->scene->nodes[i_node];
-
-    comps::Transform transform = {};
-
-    if (gltf_node->has_translation) {
-      transform.translation = HMM_V3(gltf_node->translation[0], gltf_node->translation[1], gltf_node->translation[2]);
-    }
-
-    if (gltf_node->has_rotation) {
-      transform.rotation =
-          HMM_Q(gltf_node->rotation[0], gltf_node->rotation[1], gltf_node->rotation[2], gltf_node->rotation[3]);
-    }
-
-    world::Prefab::Node node = {
-        .transform = transform,
-    };
-
-    if (gltf_node->mesh) {
-      MeshMapKV *mesh_kv = shgetp_null(mesh_map, gltf_node->mesh->name);
-
-      if (mesh_kv) {
-        node.mesh = mesh_kv->value;
-        node.has_mesh = true;
-      }
-    }
-
-    arrpush(prefab->nodes, node);
+    arrpush(prefab->nodes, parse_node(data->scene->nodes[i_node], mesh_map));
   }
 
   shfree(mesh_map);
@@ -154,7 +160,7 @@ RESULT load_model(const char *path, world::Prefab **out_prefab) {
 
   cgltf_free(data);
 
-  *out_prefab = prefab;
+  out_prefab = prefab;
 
   return true;
 }
