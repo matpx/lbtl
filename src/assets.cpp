@@ -17,7 +17,7 @@ struct MeshMapKV {
   comps::Mesh value;
 };
 
-DSArray<world::Prefab*> prefabs;
+DSArray<world::Prefab *> prefabs;
 
 RESULT parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::Vertex> &vertices,
                   DSArray<comps::MeshBuffer::IndexType> &indices, comps::Mesh &out_mesh) {
@@ -159,7 +159,6 @@ RESULT load_model(const char *path, world::Prefab *&out_prefab) {
 
   arrpush(prefabs.get(), prefab);
 
-
   out_prefab = prefab;
 
   return true;
@@ -167,7 +166,10 @@ RESULT load_model(const char *path, world::Prefab *&out_prefab) {
 
 void finish() {
   for (int32_t i_prefab = 0; i_prefab < arrlen(prefabs.get()); i_prefab++) {
-    prefabs[i_prefab]->release();
+    world::Prefab* prefab = prefabs[i_prefab];
+
+    prefab->release();
+    memory::release(prefab);
   }
 
   arrfree(prefabs.get());

@@ -89,6 +89,6 @@ template <typename T> T *make() {
   return value;
 }
 
-template <typename T> void free(T *value) { free(value); }
+template <typename T> void release(T *value) { free(value); }
 
 } // namespace memory
