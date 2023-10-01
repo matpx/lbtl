@@ -10,7 +10,15 @@ World main;
 flecs::entity camera;
 
 void World::update() {
-  query_transform.each([](const flecs::entity &e, comps::Transform &transform) { transform.update(); });
+  query_transform.each([](const flecs::entity &e, comps::Transform &transform) {
+    HMM_Mat4 local = HMM_Translate(transform.translation) * HMM_QToM4(transform.rotation); // TODO faster
+
+    if (transform.parent.is_alive()) {
+      transform.world = local * transform.parent.get<comps::Transform>()->world;
+    } else {
+      transform.world = local;
+    }
+  });
 }
 
 void World::instantiate(const Prefab *prefab) {

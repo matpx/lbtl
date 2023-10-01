@@ -15,16 +15,6 @@ struct Transform {
   HMM_Quat rotation = HMM_Q(0.0f, 0.0f, 0.0f, 1.0f);
 
   HMM_Mat4 world;
-
-  void update() {
-    HMM_Mat4 local = HMM_Translate(translation) * HMM_QToM4(rotation); // TODO faster
-
-    if (parent.is_alive()) {
-      world = local * parent.get<Transform>()->world;
-    } else {
-      world = local;
-    }
-  }
 };
 
 struct Camera {
