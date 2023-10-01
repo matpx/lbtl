@@ -74,7 +74,7 @@ RESULT parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
   return results::ok();
 }
 
-world::Prefab::Node parse_node(const cgltf_node *gltf_node, DSMap<MeshMapKV> &mesh_map) {
+world::Prefab::Node parse_node(const cgltf_node *gltf_node, DSStringMap<comps::Mesh> &mesh_map) {
   comps::Transform transform = {};
 
   if (gltf_node->has_translation) {
@@ -91,7 +91,7 @@ world::Prefab::Node parse_node(const cgltf_node *gltf_node, DSMap<MeshMapKV> &me
   };
 
   if (gltf_node->mesh) {
-    const MeshMapKV *mesh_kv = shgetp_null(mesh_map.get(), gltf_node->mesh->name);
+    const DSStringMap<comps::Mesh>::Item *mesh_kv = shgetp_null(mesh_map.get(), gltf_node->mesh->name);
 
     if (mesh_kv) {
       node.mesh = mesh_kv->value;
@@ -126,7 +126,7 @@ RESULT load_model(const char *path, world::Prefab *&out_prefab) {
 
   comps::MeshBuffer meshbuffer = {};
 
-  DSMap<MeshMapKV> mesh_map;
+  DSStringMap<comps::Mesh> mesh_map;
 
   for (int32_t i_mesh = 0; i_mesh < data->meshes_count; i_mesh++) {
     const cgltf_mesh *gltf_mesh = &data->meshes[i_mesh];
@@ -166,7 +166,7 @@ RESULT load_model(const char *path, world::Prefab *&out_prefab) {
 
 void finish() {
   for (int32_t i_prefab = 0; i_prefab < arrlen(prefabs.get()); i_prefab++) {
-    world::Prefab* prefab = prefabs[i_prefab];
+    world::Prefab *prefab = prefabs[i_prefab];
 
     prefab->release();
     memory::release(prefab);

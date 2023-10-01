@@ -22,17 +22,42 @@ struct DSArray {
   DSArray(DSArray<T>&&) = delete;
 };
 
-template<typename T>
+template<typename K, typename V>
 struct DSMap {
-  T* _internal = nullptr;
 
-  constexpr T*& get() {
+  struct Item {
+    K key;
+    V value;
+  };
+
+  Item* _internal = nullptr;
+
+  constexpr Item*& get() {
     return _internal;
   }
 
   DSMap() = default;
-  DSMap(const DSMap<T>&) = delete;
-  DSMap(DSMap<T>&&) = delete;
+  DSMap(const DSMap<K, V>&) = delete;
+  DSMap(DSMap<K, V>&&) = delete;
+};
+
+template<typename V>
+struct DSStringMap {
+
+  struct Item {
+    const char* key;
+    V value;
+  };
+
+  Item* _internal = nullptr;
+
+  constexpr Item*& get() {
+    return _internal;
+  }
+
+  DSStringMap() = default;
+  DSStringMap(const DSStringMap<V>&) = delete;
+  DSStringMap(DSStringMap<V>&&) = delete;
 };
 
 #ifndef NDEBUG
