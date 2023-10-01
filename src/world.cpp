@@ -1,4 +1,5 @@
 #include "world.hpp"
+#include "src/HandmadeMath/HandmadeMath.h"
 #include "src/components.hpp"
 #include "src/engine.hpp"
 #include "src/flecs/flecs.h"
@@ -11,7 +12,11 @@ flecs::entity camera;
 
 void World::update() {
   query_transform.each([](const flecs::entity &e, comps::Transform &transform) {
-    HMM_Mat4 local = HMM_Translate(transform.translation) * HMM_QToM4(transform.rotation); // TODO faster
+    HMM_Mat4 local = HMM_QToM4(transform.rotation);
+
+    local.Elements[3][0] += transform.translation[0];
+    local.Elements[3][1] += transform.translation[1];
+    local.Elements[3][2] += transform.translation[2];
 
     if (transform.parent.is_alive()) {
       transform.world = local * transform.parent.get<comps::Transform>()->world;
