@@ -1,9 +1,4 @@
 #include "world.hpp"
-#include "src/HandmadeMath/HandmadeMath.h"
-#include "src/components.hpp"
-#include "src/engine.hpp"
-#include "src/flecs/flecs.h"
-#include <cstdint>
 
 namespace world {
 

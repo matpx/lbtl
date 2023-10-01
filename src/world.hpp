@@ -1,9 +1,7 @@
 #pragma once
 
 #include "src/renderer.hpp"
-#include "stb/stb_ds.h"
 #include "components.hpp"
-#include "flecs/flecs.h"
 
 namespace world {
 

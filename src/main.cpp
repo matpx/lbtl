@@ -1,10 +1,8 @@
 #include "engine.hpp"
-#include "renderer.hpp"
 #include "sokol/sokol_app.h"
 #include "sokol/sokol_log.h"
 #include "src/assets.hpp"
 #include "src/player.hpp"
-#include "src/world.hpp"
 
 static void init(void) {
   LOG_DEBUG("Debug mode!")

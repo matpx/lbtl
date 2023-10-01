@@ -1,10 +1,6 @@
 #include "player.hpp"
-#include "src/HandmadeMath/HandmadeMath.h"
 #include "src/assets.hpp"
 #include "src/components.hpp"
-#include "src/flecs/flecs.h"
-#include "src/renderer.hpp"
-#include "world.hpp"
 
 namespace player {
 

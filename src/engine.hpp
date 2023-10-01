@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cassert>
 #include "stb/stb_ds.h"
+#include "linalg.hpp"
 
 template<typename T>
 struct DSArray {

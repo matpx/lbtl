@@ -1,12 +1,7 @@
 #include "assets.hpp"
 #include "cgltf/cgltf.h"
-#include "components.hpp"
 #include "renderer.hpp"
 #include "src/engine.hpp"
-#include "src/flecs/flecs.h"
-#include "src/world.hpp"
-#include "stb/stb_ds.h"
-#include <cstdint>
 #include <limits>
 
 namespace assets {
