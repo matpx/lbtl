@@ -19,30 +19,72 @@ RESULT parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
     return results::error("prim.attributes_count < 1");
   }
 
-  const cgltf_attribute &pos_attrib = gltf_prim.attributes[0];
+  if (gltf_prim.attributes_count < 3) {
+    return results::error("gltf_prim.attributes_count < 3");
+  }
 
-  if (pos_attrib.type != cgltf_attribute_type_position) {
+  const cgltf_attribute &position_attrib = gltf_prim.attributes[0];
+  const cgltf_attribute &normal_attrib = gltf_prim.attributes[1];
+  const cgltf_attribute &uv_attrib = gltf_prim.attributes[2];
+
+  if (position_attrib.type != cgltf_attribute_type_position) {
     return results::error("pos_attrib.type != cgltf_attribute_type_position");
   }
 
-  if (pos_attrib.data->is_sparse != 0) {
+  if (normal_attrib.type != cgltf_attribute_type_texcoord) {
+    return results::error("normal_attrib.type != cgltf_attribute_type_texcoord");
+  }
+
+  if (uv_attrib.type != cgltf_attribute_type_normal) {
+    return results::error("uv_attrib.type != cgltf_attribute_type_normal");
+  }
+
+  if (position_attrib.data->is_sparse != 0) {
     return results::error("pos_attrib.data->is_sparse != 0");
   }
 
+  if (normal_attrib.data->is_sparse != 0) {
+    return results::error("normal_attrib.data->is_sparse != 0");
+  }
+
+  if (uv_attrib.data->is_sparse != 0) {
+    return results::error("uv_attrib.data->is_sparse != 0");
+  }
+
   const size_t last_vertices_len = arrlen(vertices.get());
-  const size_t new_vertices_len = last_vertices_len + pos_attrib.data->count;
+  const size_t new_vertices_len = last_vertices_len + position_attrib.data->count;
 
   if (new_vertices_len >= std::numeric_limits<comps::MeshBuffer::IndexType>::max()) {
     return results::error("new_vertices_len > std::numeric_limits<int>::max()");
   }
 
+  if (position_attrib.data->count != normal_attrib.data->count ||
+      position_attrib.data->count != uv_attrib.data->count) {
+    return results::error(
+        "pos_attrib.data->count != normal_attrib.data->count || pos_attrib.data->count != uv_attrib.data->count");
+  }
+
   arrsetlen(vertices.get(), new_vertices_len);
 
-  for (int32_t i_component = 0; i_component < pos_attrib.data->count; i_component++) {
+  for (int32_t i_component = 0; i_component < position_attrib.data->count; i_component++) {
     comps::MeshBuffer::Vertex vertex;
 
-    cgltf_accessor_read_float(pos_attrib.data, i_component, vertex.poitions,
-                              sizeof(vertex.poitions) / sizeof(vertex.poitions[0]));
+    constexpr size_t tmp_count = 3;
+    float tmp[tmp_count];
+
+    assert(cgltf_accessor_read_float(position_attrib.data, i_component, tmp, tmp_count));
+    vertex.position[0] = tmp[0];
+    vertex.position[1] = tmp[1];
+    vertex.position[2] = tmp[2];
+
+    assert(cgltf_accessor_read_float(normal_attrib.data, i_component, tmp, tmp_count));
+    vertex.normal[0] = tmp[0];
+    vertex.normal[1] = tmp[1];
+    vertex.normal[2] = tmp[2];
+
+    assert(cgltf_accessor_read_float(uv_attrib.data, i_component, tmp, tmp_count));
+    vertex.uv[0] = tmp[0];
+    vertex.uv[1] = tmp[1];
 
     vertices[last_vertices_len + i_component] = vertex;
   }

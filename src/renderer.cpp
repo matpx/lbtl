@@ -27,6 +27,9 @@ void init() {
   unlit_pipeline_desc.index_type = SG_INDEXTYPE_UINT16;
   unlit_pipeline_desc.label = "unlit_pipeline";
   unlit_pipeline_desc.layout.attrs[ATTR_vs_position].format = SG_VERTEXFORMAT_FLOAT3;
+  unlit_pipeline_desc.layout.attrs[ATTR_vs_normal0].format = SG_VERTEXFORMAT_FLOAT3;
+  unlit_pipeline_desc.layout.attrs[ATTR_vs_uv0].format = SG_VERTEXFORMAT_FLOAT2;
+  unlit_pipeline_desc.depth = {.compare = SG_COMPAREFUNC_LESS_EQUAL, .write_enabled = true},
 
   unlit_pipeline = sg_make_pipeline(unlit_pipeline_desc);
 }
@@ -44,7 +47,7 @@ comps::MeshBuffer upload_meshbuffer(const sg_range vertices, const sg_range indi
   return mesh;
 }
 
-void release_meshbuffer(comps::MeshBuffer& meshbuffer) {
+void release_meshbuffer(comps::MeshBuffer &meshbuffer) {
   sg_destroy_buffer(meshbuffer.bindings.index_buffer);
   sg_destroy_buffer(meshbuffer.bindings.vertex_buffers[0]);
 }

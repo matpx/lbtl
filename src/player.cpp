@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include "src/HandmadeMath/HandmadeMath.h"
 #include "src/assets.hpp"
 #include "src/components.hpp"
 
@@ -8,9 +9,9 @@ flecs::entity player_root;
 flecs::entity player_head;
 
 void init() {
-  player_root = world::main.entity().set(comps::Transform{.translation = HMM_V3(0.0f, 0.0f, 30.f)});
+  player_root = world::main.entity().set(comps::Transform{.translation = HMM_V3(0.0f, 0.0f, 0.f)});
   player_head = world::main.entity()
-                    .set(comps::Transform{.parent = player_root, .translation = HMM_V3(0.0, 2.0f, 0.0f)})
+                    .set(comps::Transform{.parent = player_root, .translation = HMM_V3(0.0, 2.0f, 20.0f)})
                     .set(comps::Camera{});
 
   world::main.camera = player_head;
@@ -23,7 +24,9 @@ void init() {
 }
 
 void update() {
-  // player_root.get_mut<comps::Transform>()->translation.X += 0.025f;
+  auto &rotation = player_root.get_mut<comps::Transform>()->rotation;
+
+  rotation = HMM_MulQ(HMM_QFromAxisAngle_RH(HMM_V3(0, 1, 0), 0.002f), rotation);
 }
 
 } // namespace player

@@ -12,7 +12,7 @@ void World::update() {
     HMM_TranslateInplace(local, transform.translation);
 
     if (transform.parent.is_alive()) {
-      transform.world = local * transform.parent.get<comps::Transform>()->world;
+      transform.world = transform.parent.get<comps::Transform>()->world * local;
     } else {
       transform.world = local;
     }

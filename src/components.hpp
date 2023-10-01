@@ -24,7 +24,9 @@ struct Camera {
 struct MeshBuffer {
 
   struct Vertex {
-    float poitions[3];
+    float position[3];
+    float normal[3];
+    float uv[2];
   };
 
   using IndexType = uint16_t;
