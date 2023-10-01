@@ -14,9 +14,7 @@ void World::update() {
   query_transform.each([](const flecs::entity &e, comps::Transform &transform) {
     HMM_Mat4 local = HMM_QToM4(transform.rotation);
 
-    local.Elements[3][0] += transform.translation[0];
-    local.Elements[3][1] += transform.translation[1];
-    local.Elements[3][2] += transform.translation[2];
+    HMM_TranslateInplace(local, transform.translation);
 
     if (transform.parent.is_alive()) {
       transform.world = local * transform.parent.get<comps::Transform>()->world;

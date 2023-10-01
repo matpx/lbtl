@@ -1,5 +1,4 @@
 #include "assets.hpp"
-#include "HandmadeMath/HandmadeMath.h"
 #include "cgltf/cgltf.h"
 #include "components.hpp"
 #include "renderer.hpp"

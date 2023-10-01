@@ -6,7 +6,6 @@
 #include "sokol/sokol_log.h"
 #include "sokol/util/sokol_color.h"
 
-#include "HandmadeMath/HandmadeMath.h"
 #include "shader/unlit.glsl.h"
 #include "src/components.hpp"
 #include "src/world.hpp"

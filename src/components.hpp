@@ -1,10 +1,9 @@
 #pragma once
 
-#include "HandmadeMath/HandmadeMath.h"
+#include "linalg.hpp"
 #include "sokol/sokol_gfx.h"
 #include "src/engine.hpp"
 #include "src/flecs/flecs.h"
-#include <cstdint>
 
 namespace comps {
 
