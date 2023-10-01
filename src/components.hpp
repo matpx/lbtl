@@ -2,25 +2,35 @@
 
 #include "HandmadeMath/HandmadeMath.h"
 #include "sokol/sokol_gfx.h"
+#include "src/engine.hpp"
+#include "src/flecs/flecs.h"
 #include <cstdint>
 
 namespace comps {
 
 struct Transform {
+  flecs::entity parent = flecs::entity::null();
+
   HMM_Vec3 translation = HMM_V3(0.0f, 0.0f, 0.0f);
-  HMM_Quat rotation = HMM_Q(1.0f, 0.0f, 0.0f, 0.0f);
+  HMM_Quat rotation = HMM_Q(0.0f, 0.0f, 0.0f, 1.0f);
 
   HMM_Mat4 world;
 
   void update() {
-    world = HMM_Translate(translation) * HMM_QToM4(rotation); // TODO faster
+    HMM_Mat4 local = HMM_Translate(translation) * HMM_QToM4(rotation); // TODO faster
+
+    if (parent.is_alive()) {
+      world = local * parent.get<Transform>()->world;
+    } else {
+      world = local;
+    }
   }
 };
 
 struct Camera {
   HMM_Mat4 projection;
 
-  Camera() { projection = HMM_Perspective_RH_NO(0.125f, 1.0f, 0.1f, 1000.0f); }
+  Camera() { projection = HMM_Perspective_RH_ZO(0.125f, 1.0f, 0.1f, 1000.0f); }
 };
 
 struct MeshBuffer {

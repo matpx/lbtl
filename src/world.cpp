@@ -1,7 +1,7 @@
 #include "world.hpp"
 #include "src/components.hpp"
-#include "src/flecs/flecs.h"
 #include "src/engine.hpp"
+#include "src/flecs/flecs.h"
 #include <cstdint>
 
 namespace world {
@@ -10,7 +10,7 @@ World main;
 flecs::entity camera;
 
 void World::update() {
-  query_transform.each([](comps::Transform &transform) { transform.update(); });
+  query_transform.each([](const flecs::entity &e, comps::Transform &transform) { transform.update(); });
 }
 
 void World::instantiate(const Prefab *prefab) {

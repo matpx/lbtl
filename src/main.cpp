@@ -21,6 +21,7 @@ void event(const sapp_event *event) {
 
 void frame(void) {
   world::main.update();
+  player::update();
   renderer::frame();
 }
 
