@@ -15,40 +15,31 @@ DSArray<world::Prefab *> prefabs;
 
 RESULT parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::Vertex> &vertices,
                   DSArray<comps::MeshBuffer::IndexType> &indices, comps::Mesh &out_mesh) {
-  if (gltf_prim.attributes_count < 1) {
-    return results::error("prim.attributes_count < 1");
+  cgltf_attribute position_attrib = {};
+  cgltf_attribute normal_attrib = {};
+  cgltf_attribute texcoord_attrib = {};
+
+  for (int32_t i = 0; i < gltf_prim.attributes_count; i++) {
+    cgltf_attribute &attrib = gltf_prim.attributes[i];
+
+    if (attrib.type == cgltf_attribute_type_position) {
+      position_attrib = attrib;
+    } else if (attrib.type == cgltf_attribute_type_normal) {
+      normal_attrib = attrib;
+    } else if (attrib.type == cgltf_attribute_type_texcoord) {
+      texcoord_attrib = attrib;
+    } else {
+      continue;
+    }
+
+    if (attrib.data->is_sparse != 0) {
+      return results::error("attrib.data->is_sparse != 0");
+    }
   }
 
-  if (gltf_prim.attributes_count < 3) {
-    return results::error("gltf_prim.attributes_count < 3");
-  }
-
-  const cgltf_attribute &position_attrib = gltf_prim.attributes[0];
-  const cgltf_attribute &normal_attrib = gltf_prim.attributes[1];
-  const cgltf_attribute &uv_attrib = gltf_prim.attributes[2];
-
-  if (position_attrib.type != cgltf_attribute_type_position) {
-    return results::error("pos_attrib.type != cgltf_attribute_type_position");
-  }
-
-  if (normal_attrib.type != cgltf_attribute_type_texcoord) {
-    return results::error("normal_attrib.type != cgltf_attribute_type_texcoord");
-  }
-
-  if (uv_attrib.type != cgltf_attribute_type_normal) {
-    return results::error("uv_attrib.type != cgltf_attribute_type_normal");
-  }
-
-  if (position_attrib.data->is_sparse != 0) {
-    return results::error("pos_attrib.data->is_sparse != 0");
-  }
-
-  if (normal_attrib.data->is_sparse != 0) {
-    return results::error("normal_attrib.data->is_sparse != 0");
-  }
-
-  if (uv_attrib.data->is_sparse != 0) {
-    return results::error("uv_attrib.data->is_sparse != 0");
+  if (position_attrib.type != cgltf_attribute_type_position || normal_attrib.type != cgltf_attribute_type_normal ||
+      texcoord_attrib.type != cgltf_attribute_type_texcoord) {
+    return results::error("gltf attibute missing");
   }
 
   const size_t last_vertices_len = arrlen(vertices.get());
@@ -59,7 +50,7 @@ RESULT parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
   }
 
   if (position_attrib.data->count != normal_attrib.data->count ||
-      position_attrib.data->count != uv_attrib.data->count) {
+      position_attrib.data->count != texcoord_attrib.data->count) {
     return results::error(
         "pos_attrib.data->count != normal_attrib.data->count || pos_attrib.data->count != uv_attrib.data->count");
   }
@@ -82,7 +73,7 @@ RESULT parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
     vertex.normal[1] = tmp[1];
     vertex.normal[2] = tmp[2];
 
-    assert(cgltf_accessor_read_float(uv_attrib.data, i_component, tmp, tmp_count));
+    assert(cgltf_accessor_read_float(texcoord_attrib.data, i_component, tmp, tmp_count));
     vertex.uv[0] = tmp[0];
     vertex.uv[1] = tmp[1];
 
