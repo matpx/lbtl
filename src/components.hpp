@@ -29,7 +29,7 @@ struct MeshBuffer {
     float uv[2];
   };
 
-  using IndexType = uint16_t;
+  using IndexType = u16;
 
   sg_pipeline pipeline;
   sg_bindings bindings;
