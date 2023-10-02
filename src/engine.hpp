@@ -118,14 +118,21 @@ struct [[nodiscard]] Result {
 
 namespace memory {
 
-constexpr void *general_alloc(const size_t size) {
+constexpr void *general_alloc(size_t size) {
   constexpr size_t alignment = 16; // biggest alignment of any type
-  const size_t aligned_size = size + alignment - 1 - (size + alignment - 1) % alignment;
+
+  size--;
+  size |= size >> 1;
+  size |= size >> 2;
+  size |= size >> 4;
+  size |= size >> 8;
+  size |= size >> 16;
+  size++;
 
 #ifdef _WIN32
-  return _aligned_malloc(aligned_size, alignment);
+  return _aligned_malloc(size, alignment);
 #else
-  return aligned_alloc(alignment, aligned_size);
+  return aligned_alloc(alignment, size);
 #endif
 }
 
