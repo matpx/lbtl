@@ -6,11 +6,6 @@
 
 namespace assets {
 
-struct MeshMapKV {
-  const char *key;
-  comps::Mesh value;
-};
-
 DSArray<world::Prefab *> prefabs;
 
 RESULT parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::Vertex> &vertices,
