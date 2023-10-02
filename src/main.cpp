@@ -36,6 +36,7 @@ sapp_desc sokol_main(int argc, char *argv[]) {
       .event_cb = event,
       .width = 1200,
       .height = 800,
+      .sample_count = 8,
       .window_title = "lbtl",
       .icon =
           {

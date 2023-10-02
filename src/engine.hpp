@@ -118,17 +118,33 @@ struct [[nodiscard]] Result {
 
 namespace memory {
 
+constexpr void *general_alloc(const size_t size) {
+  constexpr size_t alignment = 16; // biggest alignment of any type
+  const size_t aligned_size = size + alignment - 1 - (size + alignment - 1) % alignment;
+
+#ifdef _WIN32
+  return _aligned_malloc(aligned_size, alignment);
+#else
+  return aligned_alloc(alignment, aligned_size);
+#endif
+}
+
+constexpr void general_free(void *value) {
+#ifdef _WIN32
+  return _aligned_free(value);
+#else
+  free(value);
+#endif
+}
+
 template <typename T> T *make() { // TODO use everywhere
-  constexpr size_t factor = 16;
-  constexpr size_t size = sizeof(T) + factor - 1 - (sizeof(T) + factor - 1) % factor;
+  T *value = (T *)general_alloc(sizeof(T));
 
-  T *value = (T *)aligned_alloc(factor, size);
-
-  memset(value, 0, size);
+  memset(value, 0, sizeof(T));
 
   return value;
 }
 
-template <typename T> void release(T *value) { free(value); }
+template <typename T> void release(T *value) { general_free(value); }
 
 } // namespace memory
