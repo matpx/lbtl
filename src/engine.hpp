@@ -5,6 +5,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 
 // primitives
 
@@ -112,17 +113,18 @@ struct [[nodiscard]] Result {
     return {._value = false};
   }
 
-  operator bool() const {
-    return _value;
-  }
+  operator bool() const { return _value; }
 };
 
 namespace memory {
 
-template <typename T> T *make() {
-  T *value = (T *)malloc(sizeof(T));
+template <typename T> T *make() { // TODO use everywhere
+  constexpr size_t factor = 16;
+  constexpr size_t size = sizeof(T) + factor - 1 - (sizeof(T) + factor - 1) % factor;
 
-  memset(value, 0, sizeof(T));
+  T *value = (T *)aligned_alloc(factor, size);
+
+  memset(value, 0, size);
 
   return value;
 }
