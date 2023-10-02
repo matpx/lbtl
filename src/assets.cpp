@@ -8,7 +8,7 @@ namespace assets {
 
 DSArray<world::Prefab *> prefabs;
 
-RESULT parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::Vertex> &vertices,
+Result parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::Vertex> &vertices,
                   DSArray<comps::MeshBuffer::IndexType> &indices, comps::Mesh &out_mesh) {
   cgltf_attribute position_attrib = {};
   cgltf_attribute normal_attrib = {};
@@ -28,25 +28,25 @@ RESULT parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
     }
 
     if (attrib.data->is_sparse != 0) {
-      return results::error("attrib.data->is_sparse != 0");
+      return Result::error("attrib.data->is_sparse != 0");
     }
   }
 
   if (position_attrib.type != cgltf_attribute_type_position || normal_attrib.type != cgltf_attribute_type_normal ||
       texcoord_attrib.type != cgltf_attribute_type_texcoord) {
-    return results::error("gltf attibute missing");
+    return Result::error("gltf attibute missing");
   }
 
   const size_t last_vertices_len = arrlen(vertices.get());
   const size_t new_vertices_len = last_vertices_len + position_attrib.data->count;
 
   if (new_vertices_len >= std::numeric_limits<comps::MeshBuffer::IndexType>::max()) {
-    return results::error("new_vertices_len > std::numeric_limits<int>::max()");
+    return Result::error("new_vertices_len > std::numeric_limits<int>::max()");
   }
 
   if (position_attrib.data->count != normal_attrib.data->count ||
       position_attrib.data->count != texcoord_attrib.data->count) {
-    return results::error(
+    return Result::error(
         "pos_attrib.data->count != normal_attrib.data->count || pos_attrib.data->count != uv_attrib.data->count");
   }
 
@@ -93,7 +93,7 @@ RESULT parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
   out_mesh = {.base_vertex = (comps::MeshBuffer::IndexType)last_indices_len,
               .index_count = (comps::MeshBuffer::IndexType)index_access->count};
 
-  return results::ok();
+  return Result::ok();
 }
 
 world::Prefab::Node parse_node(const cgltf_node *gltf_node, DSStringMap<comps::Mesh> &mesh_map) {
@@ -124,7 +124,7 @@ world::Prefab::Node parse_node(const cgltf_node *gltf_node, DSStringMap<comps::M
   return node;
 }
 
-RESULT load_model(const char *path, world::Prefab *&out_prefab) {
+Result load_model(const char *path, world::Prefab *&out_prefab) {
   out_prefab = nullptr;
 
   cgltf_options options = {};
@@ -132,7 +132,7 @@ RESULT load_model(const char *path, world::Prefab *&out_prefab) {
   cgltf_result result = cgltf_parse_file(&options, path, &data);
 
   if (result != cgltf_result_success) {
-    return results::error("can't open gltf file");
+    return Result::error("can't open gltf file");
   }
 
   result = cgltf_load_buffers(&options, data, path);
@@ -140,7 +140,7 @@ RESULT load_model(const char *path, world::Prefab *&out_prefab) {
   if (result != cgltf_result_success) {
     cgltf_free(data);
 
-    return results::error("can't open gltf buffers");
+    return Result::error("can't open gltf buffers");
   }
 
   DSArray<comps::MeshBuffer::Vertex> vertices;
@@ -183,7 +183,7 @@ RESULT load_model(const char *path, world::Prefab *&out_prefab) {
 
   out_prefab = prefab;
 
-  return true;
+  return Result::ok();
 }
 
 void finish() {

@@ -5,7 +5,7 @@
 
 namespace assets {
 
-RESULT load_model(const char *path, world::Prefab *&out_prefab);
+Result load_model(const char *path, world::Prefab *&out_prefab);
 
 void finish();
 

@@ -102,19 +102,20 @@ template <typename V> struct DSStringMap {
 
 // result
 
-namespace results {
+struct [[nodiscard]] Result {
+  bool _value;
 
-#define RESULT [[nodiscard]] bool
+  static constexpr Result ok() { return {._value = true}; }
 
-constexpr bool ok() { return true; }
+  static inline Result error(const char *message) {
+    LOG_ERROR("%s", message);
+    return {._value = false};
+  }
 
-inline bool error(const char *message) {
-  LOG_ERROR("%s", message)
-
-  return false;
-}
-
-} // namespace results
+  operator bool() const {
+    return _value;
+  }
+};
 
 namespace memory {
 
