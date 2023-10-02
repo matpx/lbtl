@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HandmadeMath/HandmadeMath.h"
+#include "HandmadeMath/HandmadeMath64.h"
 
 constexpr void HMM_TranslateInplace(HMM_Mat4 &Left, HMM_Vec3 Translation) {
   Left.Elements[3][0] += Translation.X;
