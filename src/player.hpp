@@ -2,8 +2,8 @@
 
 namespace player {
 
-    void init();
+void init();
 
-    void update();
+void update();
 
-}
+} // namespace player
