@@ -27,8 +27,8 @@ executable(
         'src/world.hpp',
         'src/assets.cpp',
         'src/assets.hpp',
-        'src/flecs/flecs.h',
-        'src/flecs/flecs.c'
+        'src/thirdparty/flecs/flecs.h',
+        'src/thirdparty/flecs/flecs.c'
         ],
     dependencies: deps,
     cpp_args : [

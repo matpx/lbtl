@@ -1,8 +1,7 @@
 #include "assets.hpp"
-#include "cgltf/cgltf.h"
+#include "thirdparty/cgltf/cgltf.h"
 #include "renderer.hpp"
-#include "src/engine.hpp"
-#include <limits>
+#include "engine.hpp"
 
 namespace assets {
 

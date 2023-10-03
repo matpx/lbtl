@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/components.hpp"
+#include "components.hpp"
 
 namespace renderer {
 

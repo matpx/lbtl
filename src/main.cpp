@@ -1,6 +1,6 @@
 #include "engine.hpp"
-#include "sokol/sokol_app.h"
-#include "sokol/sokol_log.h"
+#include "thirdparty/sokol/sokol_app.h"
+#include "thirdparty/sokol/sokol_log.h"
 #include "src/assets.hpp"
 #include "src/player.hpp"
 

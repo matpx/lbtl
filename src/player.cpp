@@ -1,7 +1,6 @@
 #include "player.hpp"
-#include "src/HandmadeMath/HandmadeMath.h"
-#include "src/assets.hpp"
-#include "src/components.hpp"
+#include "assets.hpp"
+#include "components.hpp"
 
 namespace player {
 

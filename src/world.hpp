@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/renderer.hpp"
+#include "renderer.hpp"
 #include "components.hpp"
 
 namespace world {

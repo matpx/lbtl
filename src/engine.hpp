@@ -1,7 +1,7 @@
 #pragma once
 
 #include "linalg.hpp"
-#include "stb/stb_ds.h"
+#include "thirdparty/stb/stb_ds.h"
 #include <cassert>
 #include <cstdint>
 #include <cstdio>

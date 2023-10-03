@@ -1,11 +1,11 @@
 #include "renderer.hpp"
-#include "sokol/sokol_app.h"
-#include "sokol/sokol_glue.h"
-#include "sokol/sokol_log.h"
-#include "sokol/util/sokol_color.h"
+#include "thirdparty/sokol/sokol_app.h"
+#include "thirdparty/sokol/sokol_glue.h"
+#include "thirdparty/sokol/sokol_log.h"
+#include "thirdparty/sokol/util/sokol_color.h"
 
 #include "shader/unlit.glsl.h"
-#include "src/world.hpp"
+#include "world.hpp"
 
 namespace renderer {
 

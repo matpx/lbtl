@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sokol/sokol_gfx.h"
-#include "src/engine.hpp"
-#include "src/flecs/flecs.h"
+#include "thirdparty/sokol/sokol_gfx.h"
+#include "engine.hpp"
+#include "thirdparty/flecs/flecs.h"
 
 namespace comps {
 
