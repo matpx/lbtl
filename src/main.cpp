@@ -13,9 +13,11 @@ static void init(void) {
   player::init();
 }
 
-void event(const sapp_event *event) {
+static void event(const sapp_event *event) {
   if (event->type == SAPP_EVENTTYPE_MOUSE_MOVE) {
     input::handle_mousemove(HMM_V2(event->mouse_dx, event->mouse_dy));
+  } else if (event->type == SAPP_EVENTTYPE_MOUSE_DOWN) {
+    sapp_lock_mouse(true);
   } else if (event->type == SAPP_EVENTTYPE_KEY_DOWN) {
     if (event->key_code == SAPP_KEYCODE_ESCAPE) {
       sapp_request_quit();
@@ -27,7 +29,7 @@ void event(const sapp_event *event) {
   }
 }
 
-void frame(void) {
+static void frame(void) {
   const float delta_time = 1.0f / 60.0f;
 
   // pre frame
@@ -45,7 +47,7 @@ void frame(void) {
   renderer::draw();
 }
 
-void cleanup(void) {
+static void cleanup(void) {
   assets::finish();
   renderer::finish();
   physics::init();
