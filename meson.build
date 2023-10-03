@@ -1,9 +1,15 @@
 project('lbtl', ['c', 'cpp'], default_options : ['cpp_std=c++20'])
 
+cmake = import('cmake')
+
+reactphysics = cmake.subproject('reactphysics3d').dependency('reactphysics3d')
+
+deps = [reactphysics]
+
 if host_machine.system() == 'windows'
-    deps = []
+    # deps = []
 else
-    deps = [dependency('GL'), dependency('X11'), dependency('xi'), dependency('xcursor')]
+    deps += [dependency('GL'), dependency('X11'), dependency('xi'), dependency('xcursor')]
 endif
 
 executable(
