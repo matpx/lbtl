@@ -1,7 +1,7 @@
 #pragma once
 
-#include "renderer.hpp"
 #include "components.hpp"
+#include "renderer.hpp"
 
 namespace world {
 
@@ -16,15 +16,18 @@ struct Prefab {
   comps::MeshBuffer meshbuffer = {};
   Node *nodes = nullptr;
 
-  void release() { 
+  void release() {
     renderer::release_meshbuffer(meshbuffer);
-    arrfree(nodes); 
-    }
+    arrfree(nodes);
+  }
 };
 
 struct World : public flecs::world {
 
   flecs::query<comps::Transform> query_transform = query<comps::Transform>();
+
+  flecs::query<comps::Transform, comps::RigidBody> query_transform_rigidbody =
+      query<comps::Transform, comps::RigidBody>();
 
   flecs::query<const comps::Transform, const comps::MeshBuffer, const comps::Mesh> query_transform_meshbuffer_mesh =
       query<const comps::Transform, const comps::MeshBuffer, const comps::Mesh>();
@@ -33,7 +36,7 @@ struct World : public flecs::world {
 
   void update();
 
-  void instantiate(const Prefab* prefab);
+  void instantiate(const Prefab *prefab);
 };
 
 extern World main;

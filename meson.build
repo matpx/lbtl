@@ -21,6 +21,8 @@ executable(
         'src/components.hpp',
         'src/input.cpp',
         'src/input.hpp',
+        'src/physics.cpp',
+        'src/physics.hpp',
         'src/renderer.cpp',
         'src/renderer.hpp',
         'src/player.cpp',

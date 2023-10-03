@@ -1,5 +1,6 @@
 #pragma once
 
+#include "reactphysics3d/body/RigidBody.h"
 #include "thirdparty/sokol/sokol_gfx.h"
 #include "engine.hpp"
 #include "thirdparty/flecs/flecs.h"
@@ -13,6 +14,10 @@ struct Transform {
   HMM_Quat rotation = HMM_Q(0.0f, 0.0f, 0.0f, 1.0f);
 
   HMM_Mat4 world;
+};
+
+struct RigidBody {
+  reactphysics3d::RigidBody* _rigidbody;
 };
 
 struct Camera {

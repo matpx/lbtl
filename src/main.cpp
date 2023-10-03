@@ -1,12 +1,14 @@
 #include "engine.hpp"
 #include "src/assets.hpp"
 #include "src/input.hpp"
+#include "src/physics.hpp"
 #include "src/player.hpp"
 #include "thirdparty/sokol/sokol_log.h"
 
 static void init(void) {
   LOG_DEBUG("Debug mode!")
 
+  physics::init();
   renderer::init();
   player::init();
 }
@@ -27,6 +29,7 @@ void frame(void) {
   input::handle_frame();
 
   world::main.update();
+  physics::update();
   player::update();
   renderer::frame();
 }
@@ -34,6 +37,7 @@ void frame(void) {
 void cleanup(void) {
   assets::finish();
   renderer::finish();
+  physics::init();
 }
 
 sapp_desc sokol_main(int argc, char *argv[]) {
