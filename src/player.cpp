@@ -30,10 +30,10 @@ void init() {
 void update() {
   const HMM_Vec2 left_axis = input::get_left_axis();
   reactphysics3d::RigidBody *rb = player_root.get_mut<comps::RigidBody>()->_rigidbody;
-  rb->applyLocalForceAtCenterOfMass(reactphysics3d::Vector3(left_axis.X, 0, -left_axis.Y) * 10);
+  rb->applyLocalForceAtCenterOfMass(reactphysics3d::Vector3(0, 0, -left_axis.Y * 10));
 
   const HMM_Vec2 right_axis = input::get_right_axis();
-  rb->applyLocalTorque(reactphysics3d::Vector3(-1,0,0) * right_axis.Y * 0.1f + reactphysics3d::Vector3(0,-1,0) * right_axis.X * 0.1f);
+  rb->applyLocalTorque(reactphysics3d::Vector3(-1,0,0) * right_axis.Y * 0.1f + reactphysics3d::Vector3(0,-1,0) * right_axis.X * 0.1f + reactphysics3d::Vector3(0,0,-1) * left_axis.X * 3);
 }
 
 } // namespace player

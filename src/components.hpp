@@ -28,7 +28,7 @@ struct RigidBody {
 struct Camera {
   HMM_Mat4 projection;
 
-  Camera() { projection = HMM_Perspective_RH_ZO(0.125f, 1.0f, 0.1f, 1000.0f); }
+  Camera() { projection = HMM_Perspective_RH_ZO(0.25f, 1.0f, 0.1f, 1000.0f); }
 };
 
 struct MeshBuffer {
