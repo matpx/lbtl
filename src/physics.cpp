@@ -21,8 +21,8 @@ void init() {
   world = physicsCommon.createPhysicsWorld(settings);
 }
 
-void update() {
-  world->update(0.01f);
+void update(const float delta_time) {
+  world->update(delta_time);
 
   world::main.query_transform_rigidbody.each([](comps::Transform &transform, comps::RigidBody &rigidbody) {
     const reactphysics3d::Vector3 &position = rigidbody._rigidbody->getTransform().getPosition();

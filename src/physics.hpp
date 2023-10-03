@@ -6,7 +6,7 @@ namespace physics {
 
 void init();
 
-void update();
+void update(float delta_time);
 
 void finish();
 

@@ -26,10 +26,12 @@ void event(const sapp_event *event) {
 }
 
 void frame(void) {
+  const float delta_time = 1.0f/60.0f;
+
   input::handle_frame();
 
   world::main.update();
-  physics::update();
+  physics::update(delta_time);
   player::update();
   renderer::frame();
 }
