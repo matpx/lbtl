@@ -2,7 +2,7 @@ project('lbtl', ['c', 'cpp'], default_options : ['cpp_std=c++20'])
 
 cmake = import('cmake')
 
-reactphysics = cmake.subproject('reactphysics3d').dependency('reactphysics3d')
+reactphysics = cmake.subproject('reactphysics3d').dependency('reactphysics3d').as_system()
 
 deps = [reactphysics]
 
