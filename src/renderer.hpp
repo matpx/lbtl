@@ -10,7 +10,7 @@ comps::MeshBuffer upload_meshbuffer(const sg_range vertices, const sg_range indi
 
 void release_meshbuffer(comps::MeshBuffer& meshbuffer);
 
-void frame();
+void draw();
 
 void finish();
 

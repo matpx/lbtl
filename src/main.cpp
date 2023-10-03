@@ -14,7 +14,9 @@ static void init(void) {
 }
 
 void event(const sapp_event *event) {
-  if (event->type == SAPP_EVENTTYPE_KEY_DOWN) {
+  if (event->type == SAPP_EVENTTYPE_MOUSE_MOVE) {
+    input::handle_mousemove(HMM_V2(event->mouse_dx, event->mouse_dy));
+  } else if (event->type == SAPP_EVENTTYPE_KEY_DOWN) {
     if (event->key_code == SAPP_KEYCODE_ESCAPE) {
       sapp_request_quit();
     }
@@ -26,14 +28,21 @@ void event(const sapp_event *event) {
 }
 
 void frame(void) {
-  const float delta_time = 1.0f/60.0f;
+  const float delta_time = 1.0f / 60.0f;
 
-  input::handle_frame();
+  // pre frame
+  input::pre_frame();
 
+  // update
   world::main.update();
   physics::update(delta_time);
   player::update();
-  renderer::frame();
+
+  // post frame
+  input::post_frame();
+
+  // draw
+  renderer::draw();
 }
 
 void cleanup(void) {
@@ -42,7 +51,7 @@ void cleanup(void) {
   physics::init();
 }
 
-sapp_desc sokol_main(int argc, char *argv[]) {
+sapp_desc sokol_main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   return sapp_desc{
       .init_cb = init,
       .frame_cb = frame,

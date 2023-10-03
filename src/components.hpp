@@ -1,9 +1,14 @@
 #pragma once
 
-#include "reactphysics3d/body/RigidBody.h"
-#include "thirdparty/sokol/sokol_gfx.h"
 #include "engine.hpp"
 #include "thirdparty/flecs/flecs.h"
+#include "thirdparty/sokol/sokol_gfx.h"
+
+namespace reactphysics3d {
+
+class RigidBody;
+
+}
 
 namespace comps {
 
@@ -17,7 +22,7 @@ struct Transform {
 };
 
 struct RigidBody {
-  reactphysics3d::RigidBody* _rigidbody;
+  reactphysics3d::RigidBody *_rigidbody;
 };
 
 struct Camera {

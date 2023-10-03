@@ -56,7 +56,7 @@ void release_meshbuffer(comps::MeshBuffer &meshbuffer) {
   sg_destroy_buffer(meshbuffer.bindings.vertex_buffers[0]);
 }
 
-void frame() {
+void draw() {
   sg_pass_action pass_action = {};
   pass_action.colors[0].clear_value = SG_GRAY;
 

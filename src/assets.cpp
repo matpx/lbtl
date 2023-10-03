@@ -13,7 +13,7 @@ Result parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
   cgltf_attribute normal_attrib = {};
   cgltf_attribute texcoord_attrib = {};
 
-  for (i32 i = 0; i < gltf_prim.attributes_count; i++) {
+  for (cgltf_size i = 0; i < gltf_prim.attributes_count; i++) {
     cgltf_attribute &attrib = gltf_prim.attributes[i];
 
     if (attrib.type == cgltf_attribute_type_position) {
@@ -51,7 +51,7 @@ Result parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
 
   arrsetlen(vertices.get(), new_vertices_len);
 
-  for (i32 i_component = 0; i_component < position_attrib.data->count; i_component++) {
+  for (cgltf_size i_component = 0; i_component < position_attrib.data->count; i_component++) {
     comps::MeshBuffer::Vertex vertex;
 
     constexpr size_t tmp_count = 3;
@@ -81,7 +81,7 @@ Result parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
 
   arrsetlen(indices.get(), new_indices_len);
 
-  for (i32 i_index = 0; i_index < index_access->count; i_index++) {
+  for (cgltf_size i_index = 0; i_index < index_access->count; i_index++) {
     comps::MeshBuffer::IndexType index;
 
     index = cgltf_accessor_read_index(index_access, i_index);
@@ -149,7 +149,7 @@ Result load_model(const char *path, world::Prefab *&out_prefab) {
 
   DSStringMap<comps::Mesh> mesh_map;
 
-  for (i32 i_mesh = 0; i_mesh < data->meshes_count; i_mesh++) {
+  for (cgltf_size i_mesh = 0; i_mesh < data->meshes_count; i_mesh++) {
     const cgltf_mesh *gltf_mesh = &data->meshes[i_mesh];
 
     if (gltf_mesh->primitives_count > 0) {
@@ -171,7 +171,7 @@ Result load_model(const char *path, world::Prefab *&out_prefab) {
   world::Prefab *prefab = memory::make<world::Prefab>();
   prefab->meshbuffer = meshbuffer;
 
-  for (i32 i_node = 0; i_node < data->scene->nodes_count; i_node++) {
+  for (cgltf_size i_node = 0; i_node < data->scene->nodes_count; i_node++) {
     arrpush(prefab->nodes, parse_node(data->scene->nodes[i_node], mesh_map));
   }
 

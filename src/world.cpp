@@ -6,7 +6,7 @@ World main;
 flecs::entity camera;
 
 void World::update() {
-  query_transform.each([](const flecs::entity &e, comps::Transform &transform) {
+  query_transform.each([](comps::Transform &transform) {
     HMM_Mat4 local = HMM_QToM4(transform.rotation);
 
     HMM_TranslateInplace(local, transform.translation);
