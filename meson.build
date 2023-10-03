@@ -19,6 +19,8 @@ executable(
         'src/impl.cpp',
         'src/engine.hpp',
         'src/components.hpp',
+        'src/input.cpp',
+        'src/input.hpp',
         'src/renderer.cpp',
         'src/renderer.hpp',
         'src/player.cpp',

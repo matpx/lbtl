@@ -1,6 +1,7 @@
 #include "player.hpp"
 #include "assets.hpp"
 #include "components.hpp"
+#include "src/input.hpp"
 
 namespace player {
 
@@ -23,9 +24,11 @@ void init() {
 }
 
 void update() {
-  auto &rotation = player_root.get_mut<comps::Transform>()->rotation;
+  // auto &rotation = player_root.get_mut<comps::Transform>()->rotation;
+  // rotation = HMM_MulQ(HMM_QFromAxisAngle_RH(HMM_V3(0, 1, 0), 0.002f), rotation);
 
-  rotation = HMM_MulQ(HMM_QFromAxisAngle_RH(HMM_V3(0, 1, 0), 0.002f), rotation);
+  player_root.get_mut<comps::Transform>()->translation.X += input::get_left_axis().X * 0.1;
+  player_root.get_mut<comps::Transform>()->translation.Z -= input::get_left_axis().Y * 0.1;
 }
 
 } // namespace player
