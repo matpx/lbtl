@@ -20,6 +20,10 @@ void init() {
       .context = sapp_sgcontext(),
   });
 
+  if(!sg_isvalid()) {
+    LOG_PANIC("!sg_isvalid()")
+  }
+
   sg_shader unlit_shader = sg_make_shader(unlit_shader_desc(sg_query_backend()));
 
   sg_pipeline_desc unlit_pipeline_desc = {};
