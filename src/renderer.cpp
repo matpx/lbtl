@@ -1,4 +1,5 @@
 #include "renderer.hpp"
+#include "src/thirdparty/HandmadeMath/HandmadeMath.h"
 #include "thirdparty/sokol/sokol_app.h"
 #include "thirdparty/sokol/sokol_glue.h"
 #include "thirdparty/sokol/sokol_log.h"
@@ -20,7 +21,7 @@ void init() {
       .context = sapp_sgcontext(),
   });
 
-  if(!sg_isvalid()) {
+  if (!sg_isvalid()) {
     LOG_PANIC("!sg_isvalid()")
   }
 
@@ -88,5 +89,7 @@ void draw() {
 }
 
 void finish() { sg_shutdown(); }
+
+[[nodiscard]] HMM_Vec2 get_width_height() { return HMM_V2(sapp_widthf(), sapp_heightf()); }
 
 } // namespace renderer
