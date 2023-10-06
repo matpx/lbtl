@@ -17,13 +17,15 @@ void World::update() {
 }
 
 void World::instantiate(const Prefab *prefab) {
+  const flecs::entity base = entity().set(prefab->meshbuffer);
+
   for (i32 i_node = 0; i_node < arrlen(prefab->nodes); i_node++) {
     const Prefab::Node &node = prefab->nodes[i_node];
 
     flecs::entity prefab_entity = entity().set(node.transform);
 
     if (node.has_mesh) {
-      prefab_entity.set(prefab->meshbuffer);
+      prefab_entity.is_a(base);
       prefab_entity.set(node.mesh);
     }
   }
