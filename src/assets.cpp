@@ -1,11 +1,12 @@
 #include "assets.hpp"
-#include "thirdparty/cgltf/cgltf.h"
-#include "renderer.hpp"
 #include "engine.hpp"
+#include "renderer.hpp"
+#include "src/world.hpp"
+#include "thirdparty/cgltf/cgltf.h"
 
 namespace assets {
 
-DSArray<world::Prefab *> prefabs;
+DSArray<memory::Owner<world::Prefab>> prefabs;
 
 Result parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::Vertex> &vertices,
                   DSArray<comps::MeshBuffer::IndexType> &indices, comps::Mesh &out_mesh) {
@@ -168,7 +169,7 @@ Result load_model(const char *path, world::Prefab *&out_prefab) {
   arrfree(vertices.get());
   arrfree(indices.get());
 
-  world::Prefab *prefab = memory::make<world::Prefab>();
+  memory::Owner<world::Prefab> prefab = memory::Owner<world::Prefab>::make();
   prefab->meshbuffer = meshbuffer;
 
   for (cgltf_size i_node = 0; i_node < data->scene->nodes_count; i_node++) {
@@ -178,19 +179,19 @@ Result load_model(const char *path, world::Prefab *&out_prefab) {
   shfree(mesh_map.get());
   cgltf_free(data);
 
-  arrpush(prefabs.get(), prefab);
+  out_prefab = prefab.get();
 
-  out_prefab = prefab;
+  arrpush(prefabs.get(), std::move(prefab));
 
   return Result::ok();
 }
 
 void finish() {
   for (i32 i_prefab = 0; i_prefab < arrlen(prefabs.get()); i_prefab++) {
-    world::Prefab *prefab = prefabs[i_prefab];
+    memory::Owner<world::Prefab> &prefab = prefabs[i_prefab];
 
     prefab->release();
-    memory::release(prefab);
+    prefab.release();
   }
 
   arrfree(prefabs.get());

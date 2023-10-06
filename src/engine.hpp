@@ -154,4 +154,30 @@ template <typename T> T *make() { // TODO use everywhere
 
 template <typename T> void release(T *value) { general_free(value); }
 
+template <typename T> struct Owner {
+private:
+  T *_value = nullptr;
+
+public:
+  Owner() = default;
+  explicit Owner(T *value) : _value(value){};
+
+  Owner(const Owner &) = delete;
+
+  Owner &operator=(Owner &&other) {
+    this->_value = other._value;
+    other._value = nullptr;
+    return *this;
+  };
+  Owner(Owner &&other) { *this = other; };
+
+  static Owner make() { return Owner(memory::make<T>()); }
+  void release() { memory::release(_value); }
+
+  [[nodiscard]] constexpr T *get() { return _value; }
+
+  T &operator*() { return _value; }
+  T *operator->() { return _value; }
+};
+
 } // namespace memory
