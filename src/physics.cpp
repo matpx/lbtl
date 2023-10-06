@@ -28,6 +28,9 @@ void update(const float delta_time) {
       rigidbody._rigidbody = world->createRigidBody(reactphysics3d::Transform(
           reactphysics3d::Vector3(comp_translation.X, comp_translation.Y, comp_translation.Z),
           reactphysics3d::Quaternion(comp_rotation.X, comp_rotation.Y, comp_rotation.Z, comp_rotation.W)));
+
+          rigidbody._rigidbody->setLinearDamping(rigidbody.linear_damping);
+          rigidbody._rigidbody->setAngularDamping(rigidbody.angular_damping);
     }
 
     const reactphysics3d::Vector3 &react_position = rigidbody._rigidbody->getTransform().getPosition();
