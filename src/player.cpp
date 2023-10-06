@@ -18,7 +18,7 @@ void init() {
                     .set(comps::Transform{.translation = HMM_V3(0.0, 0.0, 20.0)})
                     .set(comps::RigidBody{.linear_damping = 1, .angular_damping = 1.5});
   player_head = world::main.entity()
-                    .set(comps::Transform{.translation = HMM_V3(1.0, 0.0, 0.0)})
+                    .set(comps::Transform{.translation = HMM_V3(0.0, 0.0, 0.0)})
                     .set(comps::Camera(0.25f, width_height.X / width_height.Y, 0.1f, 1000.0f))
                     .child_of(player_root);
 
