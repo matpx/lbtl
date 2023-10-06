@@ -1,7 +1,6 @@
 #pragma once
 
 #include "engine.hpp"
-#include "thirdparty/flecs/flecs.h"
 #include "thirdparty/sokol/sokol_gfx.h"
 
 namespace reactphysics3d {
@@ -13,8 +12,6 @@ class RigidBody;
 namespace comps {
 
 struct Transform {
-  flecs::entity parent = flecs::entity::null();
-
   HMM_Vec3 translation = HMM_V3(0.0f, 0.0f, 0.0f);
   HMM_Quat rotation = HMM_Q(0.0f, 0.0f, 0.0f, 1.0f);
 
