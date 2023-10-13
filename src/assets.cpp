@@ -37,8 +37,8 @@ Result parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
     return Result::error("gltf attibute missing");
   }
 
-  const size_t last_vertices_len = arrlen(vertices.get());
-  const size_t new_vertices_len = last_vertices_len + position_attrib.data->count;
+  const usize last_vertices_len = arrlen(vertices.get());
+  const usize new_vertices_len = last_vertices_len + position_attrib.data->count;
 
   if (new_vertices_len >= std::numeric_limits<comps::MeshBuffer::IndexType>::max()) {
     return Result::error("new_vertices_len > std::numeric_limits<int>::max()");
@@ -55,8 +55,8 @@ Result parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
   for (cgltf_size i_component = 0; i_component < position_attrib.data->count; i_component++) {
     comps::MeshBuffer::Vertex vertex;
 
-    constexpr size_t tmp_count = 3;
-    float tmp[tmp_count];
+    constexpr usize tmp_count = 3;
+    f32 tmp[tmp_count];
 
     assert(cgltf_accessor_read_float(position_attrib.data, i_component, tmp, tmp_count));
     vertex.position[0] = tmp[0];
@@ -77,8 +77,8 @@ Result parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
 
   const cgltf_accessor *index_access = gltf_prim.indices;
 
-  const size_t last_indices_len = arrlen(indices.get());
-  const size_t new_indices_len = last_indices_len + index_access->count;
+  const usize last_indices_len = arrlen(indices.get());
+  const usize new_indices_len = last_indices_len + index_access->count;
 
   arrsetlen(indices.get(), new_indices_len);
 

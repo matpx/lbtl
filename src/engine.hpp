@@ -19,6 +19,15 @@ using u16 = uint16_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 
+using f32 = float;
+using f64 = double;
+
+using byte = char;
+
+using size = ptrdiff_t;
+using usize = size_t;
+using uptr = uintptr_t;
+
 // stb ds wrapper
 
 template <typename T> struct DSArray {
@@ -26,7 +35,7 @@ template <typename T> struct DSArray {
 
   constexpr T *&get() { return _internal; }
 
-  constexpr T &operator[](const size_t i) {
+  constexpr T &operator[](const usize i) {
     assert(i < arrlenu(_internal));
     return _internal[i];
   }
@@ -118,8 +127,8 @@ struct [[nodiscard]] Result {
 
 namespace memory {
 
-constexpr void *general_alloc(size_t size) {
-  constexpr size_t alignment = 16; // biggest alignment of any type
+constexpr void *general_alloc(usize size) {
+  constexpr usize alignment = 16; // biggest alignment of any type
 
   size--;
   size |= size >> 1;
