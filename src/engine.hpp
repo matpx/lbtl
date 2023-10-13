@@ -129,8 +129,8 @@ public:
 
   [[nodiscard]] constexpr T *get() { return _value; }
 
-  T &operator*() { return _value; }
-  T *operator->() { return _value; }
+  T &operator*() const { return _value; }
+  T *operator->() const { return _value; }
 
   friend struct NonOwner<T>;
 };
