@@ -161,7 +161,10 @@ template <typename T> T *make() { // TODO use everywhere
   return value;
 }
 
-template <typename T> void release(T *value) { general_free(value); }
+template <typename T> void release(T *&value) {
+  general_free(value);
+  value = nullptr;
+}
 
 template <typename T> struct Owner {
 private:
