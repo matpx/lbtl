@@ -1,6 +1,7 @@
 #include "player.hpp"
 #include "assets.hpp"
 #include "components.hpp"
+#include "src/engine.hpp"
 #include "src/input.hpp"
 #include "src/physics.hpp"
 #include "src/renderer.hpp"
@@ -24,7 +25,7 @@ void init() {
 
   world::main.camera = player_head;
 
-  world::Prefab *prefab = nullptr;
+  utils::NonOwner<world::Prefab> prefab;
 
   if (assets::load_model("./assets/glb/ships.glb", prefab)) {
     world::main.instantiate(prefab);

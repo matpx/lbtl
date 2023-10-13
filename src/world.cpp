@@ -1,4 +1,5 @@
 #include "world.hpp"
+#include "src/engine.hpp"
 
 namespace world {
 
@@ -16,7 +17,7 @@ void World::update() {
   });
 }
 
-void World::instantiate(const Prefab *prefab) {
+void World::instantiate(const utils::NonOwner<Prefab> &prefab) {
   const flecs::entity base = entity().set(prefab->meshbuffer);
 
   for (i32 i_node = 0; i_node < arrlen(prefab->nodes); i_node++) {

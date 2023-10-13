@@ -40,7 +40,7 @@ struct World : public flecs::world {
 
   void update();
 
-  void instantiate(const Prefab *prefab);
+  void instantiate(const utils::NonOwner<Prefab> &prefab);
 };
 
 extern World main;

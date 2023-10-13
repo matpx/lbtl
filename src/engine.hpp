@@ -28,7 +28,155 @@ using size = ptrdiff_t;
 using usize = size_t;
 using uptr = uintptr_t;
 
-// stb ds wrapper
+// logging
+
+#ifndef NDEBUG
+#define LOG_DEBUG(...)                                                                                                 \
+  {                                                                                                                    \
+    printf("[DEBUG] ");                                                                                                \
+    printf(__VA_ARGS__);                                                                                               \
+    printf("\n");                                                                                                      \
+  }
+#else
+#define LOG_DEBUG(...)                                                                                                 \
+  {}
+#endif
+#define LOG_INFO(...)                                                                                                  \
+  {                                                                                                                    \
+    printf("[INFO] ");                                                                                                 \
+    printf(__VA_ARGS__);                                                                                               \
+    printf("\n");                                                                                                      \
+  }
+#define LOG_ERROR(...)                                                                                                 \
+  {                                                                                                                    \
+    printf("[ERROR] ");                                                                                                \
+    printf(__VA_ARGS__);                                                                                               \
+    printf("\n");                                                                                                      \
+  }
+#define LOG_PANIC(...)                                                                                                 \
+  {                                                                                                                    \
+    printf("[PANIC] ");                                                                                                \
+    printf(__VA_ARGS__);                                                                                               \
+    printf("\n");                                                                                                      \
+    std::abort();                                                                                                      \
+  }
+
+// utils
+
+namespace utils {
+
+// allocator
+
+constexpr void *general_alloc(usize size) {
+  constexpr usize alignment = 16; // biggest alignment of any type
+
+  size--;
+  size |= size >> 1;
+  size |= size >> 2;
+  size |= size >> 4;
+  size |= size >> 8;
+  size |= size >> 16;
+  size++;
+
+#ifdef _WIN32
+  return _aligned_malloc(size, alignment);
+#else
+  return aligned_alloc(alignment, size);
+#endif
+}
+
+constexpr void general_free(void *value) {
+#ifdef _WIN32
+  return _aligned_free(value);
+#else
+  free(value);
+#endif
+}
+
+// pointer
+
+template <typename T> struct NonOwner;
+
+template <typename T> struct Owner {
+private:
+  T *_value = nullptr;
+
+public:
+  Owner() = default;
+  explicit Owner(T *value) : _value(value){};
+
+  Owner(const Owner &) = delete;
+
+  Owner &operator=(Owner &&other) {
+    this->_value = other._value;
+    other._value = nullptr;
+    return *this;
+  };
+  Owner(Owner &&other) { *this = other; };
+
+  static Owner make() {
+    T *value = (T *)general_alloc(sizeof(T));
+
+    memset(value, 0, sizeof(T));
+
+    return Owner(value);
+  }
+
+  void release() {
+    general_free(_value);
+    _value = nullptr;
+  }
+
+  [[nodiscard]] constexpr T *get() { return _value; }
+
+  T &operator*() { return _value; }
+  T *operator->() { return _value; }
+
+  friend struct NonOwner<T>;
+};
+
+template <typename T> struct NonOwner {
+private:
+  T *_value = nullptr;
+
+public:
+  NonOwner() = default;
+  explicit NonOwner(const Owner<T> &value) : _value(value._value){};
+  explicit NonOwner(T *value) : _value(value){};
+
+  NonOwner(const NonOwner &) = delete;
+
+  NonOwner &operator=(NonOwner &&other) {
+    this->_value = other._value;
+    other._value = nullptr;
+    return *this;
+  };
+  NonOwner(NonOwner &&other) { *this = other; };
+
+  void reset() { _value = nullptr; }
+
+  [[nodiscard]] constexpr T *get() { return _value; }
+
+  T &operator*() const { return _value; }
+  T *operator->() const { return _value; }
+};
+
+// result
+
+struct [[nodiscard]] Result {
+  bool _value;
+
+  static constexpr Result ok() { return {._value = true}; }
+
+  static inline Result error(const char *message) {
+    LOG_ERROR("%s", message);
+    return {._value = false};
+  }
+
+  operator bool() const { return _value; }
+};
+
+// std_ds wrapper
 
 template <typename T> struct DSArray {
   T *_internal = nullptr;
@@ -77,119 +225,4 @@ template <typename V> struct DSStringMap {
   DSStringMap(DSStringMap<V> &&) = delete;
 };
 
-// logging
-
-#ifndef NDEBUG
-#define LOG_DEBUG(...)                                                                                                 \
-  {                                                                                                                    \
-    printf("[DEBUG] ");                                                                                                \
-    printf(__VA_ARGS__);                                                                                               \
-    printf("\n");                                                                                                      \
-  }
-#else
-#define LOG_DEBUG(...)                                                                                                 \
-  {}
-#endif
-#define LOG_INFO(...)                                                                                                  \
-  {                                                                                                                    \
-    printf("[INFO] ");                                                                                                 \
-    printf(__VA_ARGS__);                                                                                               \
-    printf("\n");                                                                                                      \
-  }
-#define LOG_ERROR(...)                                                                                                 \
-  {                                                                                                                    \
-    printf("[ERROR] ");                                                                                                \
-    printf(__VA_ARGS__);                                                                                               \
-    printf("\n");                                                                                                      \
-  }
-#define LOG_PANIC(...)                                                                                                 \
-  {                                                                                                                    \
-    printf("[PANIC] ");                                                                                                \
-    printf(__VA_ARGS__);                                                                                               \
-    printf("\n");                                                                                                      \
-    std::abort();                                                                                                      \
-  }
-
-// result
-
-struct [[nodiscard]] Result {
-  bool _value;
-
-  static constexpr Result ok() { return {._value = true}; }
-
-  static inline Result error(const char *message) {
-    LOG_ERROR("%s", message);
-    return {._value = false};
-  }
-
-  operator bool() const { return _value; }
-};
-
-namespace memory {
-
-constexpr void *general_alloc(usize size) {
-  constexpr usize alignment = 16; // biggest alignment of any type
-
-  size--;
-  size |= size >> 1;
-  size |= size >> 2;
-  size |= size >> 4;
-  size |= size >> 8;
-  size |= size >> 16;
-  size++;
-
-#ifdef _WIN32
-  return _aligned_malloc(size, alignment);
-#else
-  return aligned_alloc(alignment, size);
-#endif
-}
-
-constexpr void general_free(void *value) {
-#ifdef _WIN32
-  return _aligned_free(value);
-#else
-  free(value);
-#endif
-}
-
-template <typename T> T *make() { // TODO use everywhere
-  T *value = (T *)general_alloc(sizeof(T));
-
-  memset(value, 0, sizeof(T));
-
-  return value;
-}
-
-template <typename T> void release(T *&value) {
-  general_free(value);
-  value = nullptr;
-}
-
-template <typename T> struct Owner {
-private:
-  T *_value = nullptr;
-
-public:
-  Owner() = default;
-  explicit Owner(T *value) : _value(value){};
-
-  Owner(const Owner &) = delete;
-
-  Owner &operator=(Owner &&other) {
-    this->_value = other._value;
-    other._value = nullptr;
-    return *this;
-  };
-  Owner(Owner &&other) { *this = other; };
-
-  static Owner make() { return Owner(memory::make<T>()); }
-  void release() { memory::release(_value); }
-
-  [[nodiscard]] constexpr T *get() { return _value; }
-
-  T &operator*() { return _value; }
-  T *operator->() { return _value; }
-};
-
-} // namespace memory
+} // namespace utils

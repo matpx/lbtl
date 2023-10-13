@@ -6,10 +6,10 @@
 
 namespace assets {
 
-DSArray<memory::Owner<world::Prefab>> prefabs;
+utils::DSArray<utils::Owner<world::Prefab>> prefabs;
 
-Result parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::Vertex> &vertices,
-                  DSArray<comps::MeshBuffer::IndexType> &indices, comps::Mesh &out_mesh) {
+utils::Result parse_prim(const cgltf_primitive &gltf_prim, utils::DSArray<comps::MeshBuffer::Vertex> &vertices,
+                         utils::DSArray<comps::MeshBuffer::IndexType> &indices, comps::Mesh &out_mesh) {
   cgltf_attribute position_attrib = {};
   cgltf_attribute normal_attrib = {};
   cgltf_attribute texcoord_attrib = {};
@@ -28,25 +28,25 @@ Result parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
     }
 
     if (attrib.data->is_sparse != 0) {
-      return Result::error("attrib.data->is_sparse != 0");
+      return utils::Result::error("attrib.data->is_sparse != 0");
     }
   }
 
   if (position_attrib.type != cgltf_attribute_type_position || normal_attrib.type != cgltf_attribute_type_normal ||
       texcoord_attrib.type != cgltf_attribute_type_texcoord) {
-    return Result::error("gltf attibute missing");
+    return utils::Result::error("gltf attibute missing");
   }
 
   const usize last_vertices_len = arrlen(vertices.get());
   const usize new_vertices_len = last_vertices_len + position_attrib.data->count;
 
   if (new_vertices_len >= std::numeric_limits<comps::MeshBuffer::IndexType>::max()) {
-    return Result::error("new_vertices_len > std::numeric_limits<int>::max()");
+    return utils::Result::error("new_vertices_len > std::numeric_limits<int>::max()");
   }
 
   if (position_attrib.data->count != normal_attrib.data->count ||
       position_attrib.data->count != texcoord_attrib.data->count) {
-    return Result::error(
+    return utils::Result::error(
         "pos_attrib.data->count != normal_attrib.data->count || pos_attrib.data->count != uv_attrib.data->count");
   }
 
@@ -93,10 +93,10 @@ Result parse_prim(const cgltf_primitive &gltf_prim, DSArray<comps::MeshBuffer::V
   out_mesh = {.base_vertex = (comps::MeshBuffer::IndexType)last_indices_len,
               .index_count = (comps::MeshBuffer::IndexType)index_access->count};
 
-  return Result::ok();
+  return utils::Result::ok();
 }
 
-world::Prefab::Node parse_node(const cgltf_node *gltf_node, DSStringMap<comps::Mesh> &mesh_map) {
+world::Prefab::Node parse_node(const cgltf_node *gltf_node, utils::DSStringMap<comps::Mesh> &mesh_map) {
   comps::Transform transform = {};
 
   if (gltf_node->has_translation) {
@@ -113,7 +113,7 @@ world::Prefab::Node parse_node(const cgltf_node *gltf_node, DSStringMap<comps::M
   };
 
   if (gltf_node->mesh) {
-    const DSStringMap<comps::Mesh>::Item *mesh_kv = shgetp_null(mesh_map.get(), gltf_node->mesh->name);
+    const utils::DSStringMap<comps::Mesh>::Item *mesh_kv = shgetp_null(mesh_map.get(), gltf_node->mesh->name);
 
     if (mesh_kv) {
       node.mesh = mesh_kv->value;
@@ -124,15 +124,15 @@ world::Prefab::Node parse_node(const cgltf_node *gltf_node, DSStringMap<comps::M
   return node;
 }
 
-Result load_model(const char *path, world::Prefab *&out_prefab) {
-  out_prefab = nullptr;
+utils::Result load_model(const char *path, utils::NonOwner<world::Prefab> &out_prefab) {
+  out_prefab.reset();
 
   cgltf_options options = {};
   cgltf_data *data = NULL;
   cgltf_result result = cgltf_parse_file(&options, path, &data);
 
   if (result != cgltf_result_success) {
-    return Result::error("can't open gltf file");
+    return utils::Result::error("can't open gltf file");
   }
 
   result = cgltf_load_buffers(&options, data, path);
@@ -140,15 +140,15 @@ Result load_model(const char *path, world::Prefab *&out_prefab) {
   if (result != cgltf_result_success) {
     cgltf_free(data);
 
-    return Result::error("can't open gltf buffers");
+    return utils::Result::error("can't open gltf buffers");
   }
 
-  DSArray<comps::MeshBuffer::Vertex> vertices;
-  DSArray<comps::MeshBuffer::IndexType> indices;
+  utils::DSArray<comps::MeshBuffer::Vertex> vertices;
+  utils::DSArray<comps::MeshBuffer::IndexType> indices;
 
   comps::MeshBuffer meshbuffer = {};
 
-  DSStringMap<comps::Mesh> mesh_map;
+  utils::DSStringMap<comps::Mesh> mesh_map;
 
   for (cgltf_size i_mesh = 0; i_mesh < data->meshes_count; i_mesh++) {
     const cgltf_mesh *gltf_mesh = &data->meshes[i_mesh];
@@ -169,7 +169,7 @@ Result load_model(const char *path, world::Prefab *&out_prefab) {
   arrfree(vertices.get());
   arrfree(indices.get());
 
-  memory::Owner<world::Prefab> prefab = memory::Owner<world::Prefab>::make();
+  utils::Owner<world::Prefab> prefab = utils::Owner<world::Prefab>::make();
   prefab->meshbuffer = meshbuffer;
 
   for (cgltf_size i_node = 0; i_node < data->scene->nodes_count; i_node++) {
@@ -179,16 +179,16 @@ Result load_model(const char *path, world::Prefab *&out_prefab) {
   shfree(mesh_map.get());
   cgltf_free(data);
 
-  out_prefab = prefab.get();
+  out_prefab = utils::NonOwner<world::Prefab>(prefab);
 
   arrpush(prefabs.get(), std::move(prefab));
 
-  return Result::ok();
+  return utils::Result::ok();
 }
 
 void finish() {
   for (i32 i_prefab = 0; i_prefab < arrlen(prefabs.get()); i_prefab++) {
-    memory::Owner<world::Prefab> &prefab = prefabs[i_prefab];
+    utils::Owner<world::Prefab> &prefab = prefabs[i_prefab];
 
     prefab->release();
     prefab.release();
