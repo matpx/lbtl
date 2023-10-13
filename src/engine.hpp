@@ -3,9 +3,11 @@
 #include "linalg.hpp"
 #include "thirdparty/stb/stb_ds.h"
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <utility>
 
 // primitives
 
@@ -19,38 +21,56 @@ using u16 = uint16_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 
+using f32 = float;
+using f64 = double;
+
+using byte = char;
+
+using size = ptrdiff_t;
+using usize = size_t;
+
 // stb ds wrapper
 
-template <typename T> struct DSArray {
-  T *_internal = nullptr;
+template <typename T> class DSArray {
+  T *_data = nullptr;
 
-  constexpr T *&get() { return _internal; }
-
-  constexpr T &operator[](const size_t i) {
-    assert(i < arrlenu(_internal));
-    return _internal[i];
-  }
-
+public:
   DSArray() = default;
+  ~DSArray() { arrfree(_data); }
   DSArray(const DSArray<T> &) = delete;
   DSArray(DSArray<T> &&) = delete;
+
+  usize size() const { return arrlen(_data); }
+
+  T *data() { return _data; }
+
+  constexpr T &operator[](const usize i) {
+    assert(i < arrlenu(_data));
+    return _data[i];
+  }
+
+  void push_back(T &&value) { arrpush(_data, std::forward<T>(value)); }
+
+  void resize(usize new_size) { arrsetlen(_data, new_size); }
+
+  void clear() { arrfree(_data); }
 };
 
-template <typename K, typename V> struct DSMap {
+// template <typename K, typename V> struct DSMap {
 
-  struct Item {
-    K key;
-    V value;
-  };
+//   struct Item {
+//     K key;
+//     V value;
+//   };
 
-  Item *_internal = nullptr;
+//   Item *_internal = nullptr;
 
-  constexpr Item *&get() { return _internal; }
+//   DSMap() = default;
+//   DSMap(const DSMap<K, V> &) = delete;
+//   DSMap(DSMap<K, V> &&) = delete;
 
-  DSMap() = default;
-  DSMap(const DSMap<K, V> &) = delete;
-  DSMap(DSMap<K, V> &&) = delete;
-};
+//   constexpr Item *data() { return _internal; }
+// };
 
 template <typename V> struct DSStringMap {
 
@@ -59,13 +79,18 @@ template <typename V> struct DSStringMap {
     V value;
   };
 
-  Item *_internal = nullptr;
-
-  constexpr Item *&get() { return _internal; }
+  Item *_data = nullptr;
 
   DSStringMap() = default;
+  ~DSStringMap() { shfree(_data); };
   DSStringMap(const DSStringMap<V> &) = delete;
   DSStringMap(DSStringMap<V> &&) = delete;
+
+  constexpr Item *data() { return _data; }
+
+  Item *get_or_null(const char *key) { return shgetp_null(_data, key); }
+
+  void emplace(const char *key, V &&value) { shput(_data, key, std::forward<V>(value)); }
 };
 
 // logging
@@ -118,8 +143,8 @@ struct [[nodiscard]] Result {
 
 namespace memory {
 
-constexpr void *general_alloc(size_t size) {
-  constexpr size_t alignment = 16; // biggest alignment of any type
+constexpr void *general_alloc(usize size) {
+  constexpr usize alignment = 16; // biggest alignment of any type
 
   size--;
   size |= size >> 1;
