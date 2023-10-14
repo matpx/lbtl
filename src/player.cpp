@@ -6,6 +6,7 @@
 #include "src/physics.hpp"
 #include "src/renderer.hpp"
 #include "src/thirdparty/HandmadeMath/HandmadeMath.h"
+#include "src/thirdparty/flecs/flecs.h"
 
 namespace player {
 
@@ -28,7 +29,9 @@ void init() {
   utils::NonOwner<world::Prefab> prefab;
 
   if (assets::load_model("./assets/glb/ships.glb", prefab)) {
-    world::main.instantiate(prefab);
+    flecs::entity space_ship = world::main.instantiate(prefab);
+
+    space_ship.get_mut<comps::Transform>()->translation.Y = -3;
   }
 }
 
