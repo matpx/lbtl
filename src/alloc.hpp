@@ -13,6 +13,10 @@ namespace utils {
 constexpr void *general_alloc(usize size) {
   constexpr usize alignment = 16; // biggest alignment of any type
 
+  if (size < alignment) { // TODO wrong
+    size = alignment;
+  }
+
   size--;
   size |= size >> 1;
   size |= size >> 2;
@@ -38,6 +42,10 @@ constexpr void general_free(void *value) {
 
 inline void *general_realloc(void *old_memory, usize size) {
   constexpr usize alignment = 16; // biggest alignment of any type
+
+  if (size < alignment) { // TODO wrong
+    size = alignment;
+  }
 
   size--;
   size |= size >> 1;
