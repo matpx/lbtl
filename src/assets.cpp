@@ -124,7 +124,7 @@ world::Prefab::Node parse_node(const cgltf_node *gltf_node, utils::DSStringMap<c
   return node;
 }
 
-utils::Result load_model(const char *path, utils::NonOwner<world::Prefab> &out_prefab) {
+utils::Result load_model(const c8 *path, utils::NonOwner<world::Prefab> &out_prefab) {
   out_prefab.reset();
 
   cgltf_options options = {};

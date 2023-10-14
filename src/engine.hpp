@@ -23,7 +23,8 @@ using u64 = uint64_t;
 using f32 = float;
 using f64 = double;
 
-using byte = char;
+using c8 = char;
+using c16 = char16_t;
 
 using size = ptrdiff_t;
 using usize = size_t;
@@ -169,7 +170,7 @@ struct [[nodiscard]] Result {
 
   static constexpr Result ok() { return {._value = true}; }
 
-  static inline Result error(const char *message) {
+  static inline Result error(const c8 *message) {
     LOG_ERROR("%s", message);
     return {._value = false};
   }
@@ -223,7 +224,7 @@ public:
 template <typename V> struct DSStringMap {
 public:
   struct Item {
-    const char *key;
+    const c8 *key;
     V value;
   };
 
@@ -233,9 +234,9 @@ private:
 public:
   constexpr Item *data() { return _ds_shmap; }
 
-  Item *get_or_null(const char *key) { return shgetp_null(_ds_shmap, key); }
+  Item *get_or_null(const c8 *key) { return shgetp_null(_ds_shmap, key); }
 
-  void put(const char *key, V &&value) { shput(_ds_shmap, key, std::move(value)); }
+  void put(const c8 *key, V &&value) { shput(_ds_shmap, key, std::move(value)); }
 
   void release() { shfree(_ds_shmap); }
 
