@@ -19,7 +19,7 @@ struct Transform {
 };
 
 struct RigidBody {
-  reactphysics3d::RigidBody *_rigidbody;
+  reactphysics3d::RigidBody *_rigidbody = nullptr;
 
   float linear_damping = 0;
   float angular_damping = 0;
