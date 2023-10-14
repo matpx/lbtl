@@ -13,7 +13,18 @@ namespace renderer {
 sg_pipeline unlit_pipeline = {};
 
 void init() {
+  const static auto my_alloc = [](size_t size, [[maybe_unused]] void *user_data) -> void * {
+    return utils::general_alloc(size);
+  };
+
+  const static auto my_free = [](void *ptr, [[maybe_unused]] void *user_data) { utils::general_free(ptr); };
+
   sg_setup({
+      .allocator =
+          {
+              .alloc = my_alloc,
+              .free = my_free,
+          },
       .logger =
           {
               .func = slog_func,

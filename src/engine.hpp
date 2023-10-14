@@ -1,34 +1,13 @@
 #pragma once
 
+#include "alloc.hpp"
 #include "linalg.hpp"
 #include "thirdparty/stb/stb_ds.h"
+#include "types.hpp"
 #include <cassert>
 #include <cstddef>
-#include <cstdint>
 #include <cstdio>
-#include <cstdlib>
-
-// primitives
-
-using i8 = int8_t;
-using i16 = int16_t;
-using i32 = int32_t;
-using i64 = int64_t;
-
-using u8 = uint8_t;
-using u16 = uint16_t;
-using u32 = uint32_t;
-using u64 = uint64_t;
-
-using f32 = float;
-using f64 = double;
-
-using c8 = char;
-using c16 = char16_t;
-
-using size = ptrdiff_t;
-using usize = size_t;
-using uptr = uintptr_t;
+#include <cstring>
 
 // logging
 
@@ -66,34 +45,6 @@ using uptr = uintptr_t;
 // utils
 
 namespace utils {
-
-// allocator
-
-constexpr void *general_alloc(usize size) {
-  constexpr usize alignment = 16; // biggest alignment of any type
-
-  size--;
-  size |= size >> 1;
-  size |= size >> 2;
-  size |= size >> 4;
-  size |= size >> 8;
-  size |= size >> 16;
-  size++;
-
-#ifdef _WIN32
-  return _aligned_malloc(size, alignment);
-#else
-  return aligned_alloc(alignment, size);
-#endif
-}
-
-constexpr void general_free(void *value) {
-#ifdef _WIN32
-  return _aligned_free(value);
-#else
-  free(value);
-#endif
-}
 
 // pointer
 

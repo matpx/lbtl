@@ -8,5 +8,8 @@
 #define CGLTF_IMPLEMENTATION
 #include "thirdparty/cgltf/cgltf.h"
 
+#include "alloc.hpp"
 #define STB_DS_IMPLEMENTATION
+#define STBDS_REALLOC(context, ptr, size) utils::general_realloc(ptr, size)
+#define STBDS_FREE(context, ptr) utils::general_free(ptr)
 #include "thirdparty/stb/stb_ds.h"
