@@ -17,6 +17,9 @@ executable(
     [
         'src/main.cpp',
         'src/impl.cpp',
+        'src/alloc.cpp',
+        'src/alloc.hpp',
+        'src/types.hpp',
         'src/engine.hpp',
         'src/components.hpp',
         'src/input.cpp',

@@ -11,6 +11,8 @@
 
 // logging
 
+// TODO rename logging macros
+
 #ifndef NDEBUG
 #define LOG_DEBUG(...)                                                                                                 \
   {                                                                                                                    \

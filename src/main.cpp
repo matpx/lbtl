@@ -51,6 +51,8 @@ static void cleanup(void) {
   assets::finish();
   renderer::finish();
   physics::init();
+
+  utils::assert_no_leaks();
 }
 
 sapp_desc sokol_main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
