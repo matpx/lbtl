@@ -37,7 +37,7 @@ void init() {
 
 void update() {
   const HMM_Vec2 left_axis = input::get_left_axis();
-  reactphysics3d::RigidBody *rb = player_root.get_mut<comps::RigidBody>()->_rigidbody;
+  utils::NonOwner<reactphysics3d::RigidBody> rb = player_root.get_mut<comps::RigidBody>()->_rigidbody;
   rb->applyLocalForceAtCenterOfMass(reactphysics3d::Vector3(0, 0, -left_axis.Y * 50));
 
   const HMM_Vec2 right_axis = input::get_right_axis();

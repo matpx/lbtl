@@ -168,8 +168,8 @@ utils::Result load_model(const c8 *path, utils::NonOwner<world::Prefab> &out_pre
 
   vertices.release();
   indices.release();
-
   utils::Owner<world::Prefab> prefab = utils::Owner<world::Prefab>::make();
+
   prefab->meshbuffer = meshbuffer;
 
   for (cgltf_size i_node = 0; i_node < data->scene->nodes_count; i_node++) {

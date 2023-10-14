@@ -131,7 +131,7 @@ public:
 
   [[nodiscard]] constexpr T *get() { return _value; }
 
-  T &operator*() const { return _value; }
+  T &operator*() const { return *_value; }
   T *operator->() const { return _value; }
 
   friend struct NonOwner<T>;
@@ -146,7 +146,16 @@ public:
   explicit NonOwner(const Owner<T> &value) : _value(value._value){};
   explicit NonOwner(T *value) : _value(value){};
 
-  NonOwner(const NonOwner &) = delete;
+  NonOwner &operator=(T *ptr) {
+    _value = ptr;
+    return *this;
+  };
+
+  NonOwner &operator=(const NonOwner &other) {
+    this->_value = other._value;
+    return *this;
+  };
+  NonOwner(const NonOwner &other) { *this = other; };
 
   NonOwner &operator=(NonOwner &&other) {
     this->_value = other._value;
@@ -159,7 +168,7 @@ public:
 
   [[nodiscard]] constexpr T *get() { return _value; }
 
-  T &operator*() const { return _value; }
+  T &operator*() const { return *_value; }
   T *operator->() const { return _value; }
 };
 
