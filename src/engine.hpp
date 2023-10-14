@@ -3,6 +3,7 @@
 #include "linalg.hpp"
 #include "thirdparty/stb/stb_ds.h"
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -179,48 +180,67 @@ struct [[nodiscard]] Result {
 // std_ds wrapper
 
 template <typename T> struct DSArray {
-  T *_internal = nullptr;
+private:
+  T *_ds_arr = nullptr;
 
-  constexpr T *&get() { return _internal; }
+public:
+  constexpr T *data() { return _ds_arr; }
 
   constexpr T &operator[](const usize i) {
-    assert(i < arrlenu(_internal));
-    return _internal[i];
+    assert(i < arrlenu(_ds_arr));
+    return _ds_arr[i];
   }
 
+  void setlen(const usize new_len) { arrsetlen(_ds_arr, new_len); }
+  usize len() const { return arrlen(_ds_arr); }
+
+  void push_back(T &&item) { arrpush(_ds_arr, std::move(item)); }
+
+  void release() { arrfree(_ds_arr); }
+
   DSArray() = default;
+  ~DSArray() { assert(_ds_arr == nullptr); };
   DSArray(const DSArray<T> &) = delete;
   DSArray(DSArray<T> &&) = delete;
 };
 
-template <typename K, typename V> struct DSMap {
+// template <typename K, typename V> struct DSMap {
 
-  struct Item {
-    K key;
-    V value;
-  };
+//   struct Item {
+//     K key;
+//     V value;
+//   };
 
-  Item *_internal = nullptr;
+//   Item *_internal = nullptr;
 
-  constexpr Item *&get() { return _internal; }
+//   constexpr Item *&get() { return _internal; }
 
-  DSMap() = default;
-  DSMap(const DSMap<K, V> &) = delete;
-  DSMap(DSMap<K, V> &&) = delete;
-};
+//   DSMap() = default;
+//   DSMap(const DSMap<K, V> &) = delete;
+//   DSMap(DSMap<K, V> &&) = delete;
+// };
 
 template <typename V> struct DSStringMap {
-
+public:
   struct Item {
     const char *key;
     V value;
   };
 
-  Item *_internal = nullptr;
+private:
+  Item *_ds_shmap = nullptr;
 
-  constexpr Item *&get() { return _internal; }
+public:
+  constexpr Item *data() { return _ds_shmap; }
+
+  Item *get_or_null(const char *key) { return shgetp_null(_ds_shmap, key); }
+
+  void put(const char *key, V &&value) { shput(_ds_shmap, key, std::move(value)); }
+
+  void release() { shfree(_ds_shmap); }
 
   DSStringMap() = default;
+  ~DSStringMap() { assert(_ds_shmap == nullptr); };
   DSStringMap(const DSStringMap<V> &) = delete;
   DSStringMap(DSStringMap<V> &&) = delete;
 };
