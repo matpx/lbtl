@@ -30,10 +30,14 @@ void *general_alloc(usize size) {
   size++;
 
 #ifdef _WIN32
-  return _aligned_malloc(size, alignment);
+  void *ptr = _aligned_malloc(size, alignment);
 #else
-  return aligned_alloc(alignment, size);
+  void *ptr = aligned_alloc(alignment, size);
 #endif
+
+  memset(ptr, 0, size);
+
+  return ptr;
 }
 
 void general_free(void *value) {

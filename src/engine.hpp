@@ -63,6 +63,8 @@ public:
   Owner(const Owner &) = delete;
 
   Owner &operator=(Owner &&other) {
+    assert(_value == nullptr);
+
     this->_value = other._value;
     other._value = nullptr;
     return *this;
