@@ -457,8 +457,8 @@ CREDITS
 #endif
 #if !defined(STBDS_REALLOC) && !defined(STBDS_FREE)
 #include <stdlib.h>
-// #define STBDS_REALLOC(c,p,s) realloc(p,s)
-// #define STBDS_FREE(c,p)      free(p)
+#define STBDS_REALLOC(c,p,s) realloc(p,s)
+#define STBDS_FREE(c,p)      free(p)
 #endif
 
 #ifdef _MSC_VER
