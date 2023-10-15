@@ -28,7 +28,7 @@ struct World : public flecs::world {
   flecs::query<comps::Transform> query_transform = query<comps::Transform>();
 
   flecs::query<comps::Transform, const comps::Transform> query_transform_transform =
-      query_builder<comps::Transform, const comps::Transform>().parent().build();
+      query_builder<comps::Transform, const comps::Transform>().parent().cascade().build();
 
   flecs::query<comps::Transform, comps::RigidBody> query_transform_rigidbody =
       query<comps::Transform, comps::RigidBody>();
