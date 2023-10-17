@@ -54,4 +54,8 @@ struct Mesh {
   MeshBuffer::IndexType index_count;
 };
 
+struct Player {
+  HMM_Vec2 head_angles;
+};
+
 } // namespace comps
