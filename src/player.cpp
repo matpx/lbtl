@@ -5,7 +5,6 @@
 #include "src/input.hpp"
 #include "src/physics.hpp"
 #include "src/renderer.hpp"
-#include "src/thirdparty/HandmadeMath/HandmadeMath.h"
 #include "src/thirdparty/flecs/flecs.h"
 #include <reactphysics3d/mathematics/Quaternion.h>
 #include <reactphysics3d/mathematics/Vector3.h>
