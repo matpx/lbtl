@@ -3,6 +3,7 @@
 #include "renderer.hpp"
 #include "src/world.hpp"
 #include "thirdparty/cgltf/cgltf.h"
+#include <limits>
 
 namespace assets {
 

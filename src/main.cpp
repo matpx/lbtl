@@ -8,8 +8,8 @@
 static void init(void) {
   LOG_DEBUG("Debug mode!")
 
-  physics::init();
   renderer::init();
+  physics::init();
   player::init();
 }
 
@@ -49,8 +49,8 @@ static void frame(void) {
 
 static void cleanup(void) {
   assets::finish();
-  renderer::finish();
   physics::init();
+  renderer::finish();
 
   utils::assert_no_leaks();
 }

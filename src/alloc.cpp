@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <malloc.h>
-#include <sys/syslog.h>
 
 namespace utils {
 
@@ -35,7 +34,7 @@ void *general_alloc(usize size) {
   void *ptr = aligned_alloc(alignment, size);
 #endif
 
-  memset(ptr, 0, size);
+  // memset(ptr, 0, size);
 
   return ptr;
 }
@@ -69,9 +68,16 @@ void *general_realloc(void *old_memory, usize size) {
   size |= size >> 16;
   size++;
 
-  // #ifdef _WIN32
-  //   return _aligned_realloc(value, size, alignment);
-  // #else
+#ifdef _WIN32
+  if (size != 0) {
+    alloc_counter++;
+  }
+  if (old_memory) {
+    alloc_counter--;
+  }
+
+  return _aligned_realloc(old_memory, size, alignment);
+#else
   void *new_memory = nullptr;
 
   if (size != 0) {
@@ -86,7 +92,7 @@ void *general_realloc(void *old_memory, usize size) {
   general_free(old_memory);
 
   return new_memory;
-  // #endif
+#endif
 }
 
 void assert_no_leaks() { assert(alloc_counter == 0); }

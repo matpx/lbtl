@@ -32,7 +32,7 @@ void init() {
 
   if (assets::load_model("./assets/glb/ships.glb", prefab)) {
     flecs::entity space_ship = world::main.instantiate(prefab);
-    space_ship.get_mut<comps::Transform>()->translation.X = 0.01;
+    space_ship.get_mut<comps::Transform>()->translation.X = 0.01f;
   }
 }
 
@@ -42,7 +42,7 @@ void update() {
 
   comps::Player *player = player_root.get_mut<comps::Player>();
 
-  player->head_angles += input::get_right_axis() * 0.00075;
+  player->head_angles += input::get_right_axis() * 0.00075f;
   player->head_angles.Y = HMM_Clamp(-0.25, player->head_angles.Y, 0.25);
 
   const HMM_Quat vertical_rotation = HMM_QFromAxisAngle_LH(HMM_V3(1, 0, 0), player->head_angles.Y);

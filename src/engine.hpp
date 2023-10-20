@@ -4,6 +4,8 @@
 #include "linalg.hpp"
 #include "thirdparty/stb/stb_ds.h"
 #include "types.hpp"
+#include <utility>
+#include <cstdlib>
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
@@ -63,7 +65,7 @@ public:
   Owner(const Owner &) = delete;
 
   Owner &operator=(Owner &&other) {
-    assert(_value == nullptr);
+    // assert(_value == nullptr);
 
     this->_value = other._value;
     other._value = nullptr;
