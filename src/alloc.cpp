@@ -1,7 +1,6 @@
 #include "alloc.hpp"
 #include "engine.hpp"
 #include <algorithm>
-#include <cassert>
 #include <cstdlib>
 #include <cstring>
 #include <malloc.h>
