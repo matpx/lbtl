@@ -4,16 +4,19 @@
 #include "linalg.hpp"
 #include "thirdparty/stb/stb_ds.h"
 #include "types.hpp"
-#include <utility>
-#include <cstdlib>
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <utility>
 
 // logging
 
 // TODO rename logging macros
+
+#define LOG_ASSERT(CONDITION)                                                                                          \
+  { assert(CONDITION); }
 
 #ifndef NDEBUG
 #define LOG_DEBUG(...)                                                                                                 \
@@ -65,7 +68,7 @@ public:
   Owner(const Owner &) = delete;
 
   Owner &operator=(Owner &&other) {
-    // assert(_value == nullptr);
+    // LOG_ASSERT(_value == nullptr);
 
     this->_value = other._value;
     other._value = nullptr;
@@ -154,7 +157,7 @@ public:
   constexpr T *data() { return _ds_arr; }
 
   constexpr T &operator[](const usize i) {
-    assert(i < arrlenu(_ds_arr));
+    LOG_ASSERT(i < arrlenu(_ds_arr));
     return _ds_arr[i];
   }
 
@@ -166,7 +169,7 @@ public:
   void release() { arrfree(_ds_arr); }
 
   DSArray() = default;
-  ~DSArray() { assert(_ds_arr == nullptr); };
+  ~DSArray() { LOG_ASSERT(_ds_arr == nullptr); };
   DSArray(const DSArray<T> &) = delete;
   DSArray(DSArray<T> &&) = delete;
 };
@@ -207,7 +210,7 @@ public:
   void release() { shfree(_ds_shmap); }
 
   DSStringMap() = default;
-  ~DSStringMap() { assert(_ds_shmap == nullptr); };
+  ~DSStringMap() { LOG_ASSERT(_ds_shmap == nullptr); };
   DSStringMap(const DSStringMap<V> &) = delete;
   DSStringMap(DSStringMap<V> &&) = delete;
 };

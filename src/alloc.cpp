@@ -1,4 +1,5 @@
 #include "alloc.hpp"
+#include "engine.hpp"
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
@@ -95,6 +96,6 @@ void *general_realloc(void *old_memory, usize size) {
 #endif
 }
 
-void assert_no_leaks() { assert(alloc_counter == 0); }
+void assert_no_leaks() { LOG_ASSERT(alloc_counter == 0); }
 
 } // namespace utils

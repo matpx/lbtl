@@ -59,17 +59,17 @@ utils::Result parse_prim(const cgltf_primitive &gltf_prim, utils::DSArray<comps:
     constexpr usize tmp_count = 3;
     f32 tmp[tmp_count];
 
-    assert(cgltf_accessor_read_float(position_attrib.data, i_component, tmp, tmp_count));
+    LOG_ASSERT(cgltf_accessor_read_float(position_attrib.data, i_component, tmp, tmp_count));
     vertex.position[0] = tmp[0];
     vertex.position[1] = tmp[1];
     vertex.position[2] = tmp[2];
 
-    assert(cgltf_accessor_read_float(normal_attrib.data, i_component, tmp, tmp_count));
+    LOG_ASSERT(cgltf_accessor_read_float(normal_attrib.data, i_component, tmp, tmp_count));
     vertex.normal[0] = tmp[0];
     vertex.normal[1] = tmp[1];
     vertex.normal[2] = tmp[2];
 
-    assert(cgltf_accessor_read_float(texcoord_attrib.data, i_component, tmp, tmp_count));
+    LOG_ASSERT(cgltf_accessor_read_float(texcoord_attrib.data, i_component, tmp, tmp_count));
     vertex.uv[0] = tmp[0];
     vertex.uv[1] = tmp[1];
 
