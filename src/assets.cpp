@@ -84,9 +84,8 @@ utils::Result parse_prim(const cgltf_primitive &gltf_prim, utils::DSArray<comps:
   indices.setlen(new_indices_len);
 
   for (cgltf_size i_index = 0; i_index < index_access->count; i_index++) {
-    comps::MeshBuffer::IndexType index;
-
-    index = cgltf_accessor_read_index(index_access, i_index);
+    comps::MeshBuffer::IndexType index =
+        static_cast<comps::MeshBuffer::IndexType>(cgltf_accessor_read_index(index_access, i_index));
 
     indices[last_indices_len + i_index] = index;
   }
