@@ -5,10 +5,8 @@
 #include "thirdparty/stb/stb_ds.h"
 #include "types.hpp"
 #include <cassert>
-#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 #include <utility>
 
 // logging
@@ -64,8 +62,8 @@ private:
 public:
   Owner() = default;
   explicit Owner(T *value) : _value(value){};
-
   Owner(const Owner &) = delete;
+  Owner(Owner &&other) { *this = other; };
 
   Owner &operator=(Owner &&other) {
     // LOG_ASSERT(_value == nullptr);
@@ -74,25 +72,24 @@ public:
     other._value = nullptr;
     return *this;
   };
-  Owner(Owner &&other) { *this = other; };
+
+  T &operator*() const { return *_value; }
+  T *operator->() const { return _value; }
 
   static Owner make() {
-    T *value = (T *)aligned_alloc_16(sizeof(T));
+    T *value = static_cast<T *>(aligned_alloc_16(sizeof(T)));
 
     memset(value, 0, sizeof(T));
 
     return Owner(value);
   }
 
+  [[nodiscard]] constexpr T *get() { return _value; }
+
   void release() {
     aligned_free_16(_value);
     _value = nullptr;
   }
-
-  [[nodiscard]] constexpr T *get() { return _value; }
-
-  T &operator*() const { return *_value; }
-  T *operator->() const { return _value; }
 
   friend struct NonOwner<T>;
 };
@@ -105,31 +102,31 @@ public:
   NonOwner() = default;
   explicit NonOwner(const Owner<T> &value) : _value(value._value){};
   explicit NonOwner(T *value) : _value(value){};
-
-  NonOwner &operator=(T *ptr) {
-    _value = ptr;
-    return *this;
-  };
+  NonOwner(const NonOwner &other) { *this = other; };
+  NonOwner(NonOwner &&other) { *this = other; };
 
   NonOwner &operator=(const NonOwner &other) {
     this->_value = other._value;
     return *this;
   };
-  NonOwner(const NonOwner &other) { *this = other; };
 
   NonOwner &operator=(NonOwner &&other) {
     this->_value = other._value;
     other._value = nullptr;
     return *this;
   };
-  NonOwner(NonOwner &&other) { *this = other; };
 
-  void reset() { _value = nullptr; }
-
-  [[nodiscard]] constexpr T *get() { return _value; }
+  NonOwner &operator=(T *ptr) {
+    _value = ptr;
+    return *this;
+  };
 
   T &operator*() const { return *_value; }
   T *operator->() const { return _value; }
+
+  [[nodiscard]] constexpr T *get() { return _value; }
+
+  void reset() { _value = nullptr; }
 };
 
 // result
@@ -154,6 +151,11 @@ private:
   T *_ds_arr = nullptr;
 
 public:
+  DSArray() = default;
+  ~DSArray() { LOG_ASSERT(_ds_arr == nullptr); };
+  DSArray(const DSArray<T> &) = delete;
+  DSArray(DSArray<T> &&) = delete;
+
   constexpr T *data() { return _ds_arr; }
 
   constexpr T &operator[](const usize i) {
@@ -161,17 +163,11 @@ public:
     return _ds_arr[i];
   }
 
-  void setlen(const usize new_len) { arrsetlen(_ds_arr, new_len); }
-  usize len() const { return arrlen(_ds_arr); }
+  usize size() const { return arrlen(_ds_arr); }
 
-  void push_back(T &&item) { arrpush(_ds_arr, std::move(item)); }
-
+  void resize(const usize new_len) { arrsetlen(_ds_arr, new_len); }
+  void emplace_back(T &&item) { arrpush(_ds_arr, std::forward<T>(item)); }
   void release() { arrfree(_ds_arr); }
-
-  DSArray() = default;
-  ~DSArray() { LOG_ASSERT(_ds_arr == nullptr); };
-  DSArray(const DSArray<T> &) = delete;
-  DSArray(DSArray<T> &&) = delete;
 };
 
 // template <typename K, typename V> struct DSMap {
@@ -201,18 +197,17 @@ private:
   Item *_ds_shmap = nullptr;
 
 public:
-  constexpr Item *data() { return _ds_shmap; }
-
-  Item *get_or_null(const c8 *key) { return shgetp_null(_ds_shmap, key); }
-
-  void put(const c8 *key, V &&value) { shput(_ds_shmap, key, std::move(value)); }
-
-  void release() { shfree(_ds_shmap); }
-
   DSStringMap() = default;
   ~DSStringMap() { LOG_ASSERT(_ds_shmap == nullptr); };
   DSStringMap(const DSStringMap<V> &) = delete;
   DSStringMap(DSStringMap<V> &&) = delete;
+
+  constexpr Item *data() { return _ds_shmap; }
+
+  Item *get_or_null(const c8 *key) { return shgetp_null(_ds_shmap, key); }
+
+  void put(const c8 *key, V &&value) { shput(_ds_shmap, key, std::forward<V>(value)); }
+  void release() { shfree(_ds_shmap); }
 };
 
 } // namespace utils

@@ -38,7 +38,7 @@ utils::Result parse_prim(const cgltf_primitive &gltf_prim, utils::DSArray<comps:
     return utils::Result::error("gltf attibute missing");
   }
 
-  const usize last_vertices_len = vertices.len();
+  const usize last_vertices_len = vertices.size();
   const usize new_vertices_len = last_vertices_len + position_attrib.data->count;
 
   if (new_vertices_len >= std::numeric_limits<comps::MeshBuffer::IndexType>::max()) {
@@ -51,7 +51,7 @@ utils::Result parse_prim(const cgltf_primitive &gltf_prim, utils::DSArray<comps:
         "pos_attrib.data->count != normal_attrib.data->count || pos_attrib.data->count != uv_attrib.data->count");
   }
 
-  vertices.setlen(new_vertices_len);
+  vertices.resize(new_vertices_len);
 
   for (cgltf_size i_component = 0; i_component < position_attrib.data->count; i_component++) {
     comps::MeshBuffer::Vertex vertex;
@@ -78,10 +78,10 @@ utils::Result parse_prim(const cgltf_primitive &gltf_prim, utils::DSArray<comps:
 
   const cgltf_accessor *index_access = gltf_prim.indices;
 
-  const usize last_indices_len = indices.len();
+  const usize last_indices_len = indices.size();
   const usize new_indices_len = last_indices_len + index_access->count;
 
-  indices.setlen(new_indices_len);
+  indices.resize(new_indices_len);
 
   for (cgltf_size i_index = 0; i_index < index_access->count; i_index++) {
     comps::MeshBuffer::IndexType index =
@@ -163,8 +163,8 @@ utils::Result load_model(const c8 *path, utils::NonOwner<world::Prefab> &out_pre
   }
 
   meshbuffer = renderer::upload_meshbuffer(
-      sg_range{.ptr = vertices.data(), .size = vertices.len() * sizeof(comps::MeshBuffer::Vertex)},
-      sg_range{.ptr = indices.data(), .size = indices.len() * sizeof(comps::MeshBuffer::IndexType)});
+      sg_range{.ptr = vertices.data(), .size = vertices.size() * sizeof(comps::MeshBuffer::Vertex)},
+      sg_range{.ptr = indices.data(), .size = indices.size() * sizeof(comps::MeshBuffer::IndexType)});
 
   vertices.release();
   indices.release();
@@ -181,13 +181,13 @@ utils::Result load_model(const c8 *path, utils::NonOwner<world::Prefab> &out_pre
 
   out_prefab = utils::NonOwner<world::Prefab>(prefab);
 
-  prefabs.push_back(std::move(prefab));
+  prefabs.emplace_back(std::move(prefab));
 
   return utils::Result::ok();
 }
 
 void finish() {
-  for (usize i_prefab = 0; i_prefab < prefabs.len(); i_prefab++) {
+  for (usize i_prefab = 0; i_prefab < prefabs.size(); i_prefab++) {
     utils::Owner<world::Prefab> &prefab = prefabs[i_prefab];
 
     prefab->release();

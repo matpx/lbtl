@@ -960,10 +960,10 @@ static const uint32_t GlbMagicBinChunk = 0x004E4942;
 #endif
 
 #ifndef CGLTF_MALLOC
-// #define CGLTF_MALLOC(size) malloc(size)
+#define CGLTF_MALLOC(size) malloc(size)
 #endif
 #ifndef CGLTF_FREE
-// #define CGLTF_FREE(ptr) free(ptr)
+#define CGLTF_FREE(ptr) free(ptr)
 #endif
 #ifndef CGLTF_ATOI
 #define CGLTF_ATOI(str) atoi(str)
