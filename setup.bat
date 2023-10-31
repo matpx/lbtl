@@ -1,1 +1,1 @@
-meson setup build --warnlevel 2 --wipe
+meson setup build --warnlevel 2 --backend vs --wipe
