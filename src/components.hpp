@@ -21,8 +21,8 @@ struct Transform {
 struct RigidBody {
   utils::NonOwner<reactphysics3d::RigidBody> _rigidbody;
 
-  float linear_damping = 0;
-  float angular_damping = 0;
+  float linear_damping = 0.0f;
+  float angular_damping = 0.0f;
 };
 
 struct Camera {
