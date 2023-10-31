@@ -9,24 +9,14 @@ namespace utils {
 
 static i32 alloc_counter = 0;
 
-// allocator
+constexpr usize alignment = 16;
+constexpr usize align_size(const usize size) { return ((size - 1) | (alignment - 1)) + 1; }
 
-void *general_alloc(usize size) {
-  constexpr usize alignment = 16; // biggest alignment of any type
+void *aligned_alloc_16(usize size) {
 
   alloc_counter++;
 
-  if (size < alignment) { // TODO wrong
-    size = alignment;
-  }
-
-  size--;
-  size |= size >> 1;
-  size |= size >> 2;
-  size |= size >> 4;
-  size |= size >> 8;
-  size |= size >> 16;
-  size++;
+  size = align_size(size);
 
 #ifdef _WIN32
   void *ptr = _aligned_malloc(size, alignment);
@@ -39,7 +29,7 @@ void *general_alloc(usize size) {
   return ptr;
 }
 
-void general_free(void *value) {
+void aligned_free_16(void *value) {
   if (value == nullptr) {
     return;
   }
@@ -53,20 +43,8 @@ void general_free(void *value) {
 #endif
 }
 
-void *general_realloc(void *old_memory, usize size) {
-  constexpr usize alignment = 16; // biggest alignment of any type
-
-  if (size < alignment) { // TODO wrong
-    size = alignment;
-  }
-
-  size--;
-  size |= size >> 1;
-  size |= size >> 2;
-  size |= size >> 4;
-  size |= size >> 8;
-  size |= size >> 16;
-  size++;
+void *aligned_realloc_16(void *old_memory, usize size) {
+  size = align_size(size);
 
 #ifdef _WIN32
   if (size != 0) {

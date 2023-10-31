@@ -2,21 +2,21 @@
 
 #include "types.hpp"
 
-#define CGLTF_MALLOC(size) utils::general_alloc(size)
-#define CGLTF_FREE(ptr) utils::general_free(ptr)
+#define CGLTF_MALLOC(size) utils::aligned_alloc_16(size)
+#define CGLTF_FREE(ptr) utils::aligned_free_16(ptr)
 
-#define STBDS_REALLOC(context, ptr, size) utils::general_realloc(ptr, size)
-#define STBDS_FREE(context, ptr) utils::general_free(ptr)
+#define STBDS_REALLOC(context, ptr, size) utils::aligned_realloc_16(ptr, size)
+#define STBDS_FREE(context, ptr) utils::aligned_free_16(ptr)
 
 namespace utils {
 
 // allocator
 
-void *general_alloc(usize size);
+void *aligned_alloc_16(usize size);
 
-void general_free(void *value);
+void aligned_free_16(void *value);
 
-void *general_realloc(void *old_memory, usize size);
+void *aligned_realloc_16(void *old_memory, usize size);
 
 void assert_no_leaks();
 

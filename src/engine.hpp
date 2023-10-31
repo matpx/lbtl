@@ -77,7 +77,7 @@ public:
   Owner(Owner &&other) { *this = other; };
 
   static Owner make() {
-    T *value = (T *)general_alloc(sizeof(T));
+    T *value = (T *)aligned_alloc_16(sizeof(T));
 
     memset(value, 0, sizeof(T));
 
@@ -85,7 +85,7 @@ public:
   }
 
   void release() {
-    general_free(_value);
+    aligned_free_16(_value);
     _value = nullptr;
   }
 
