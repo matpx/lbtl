@@ -2,9 +2,6 @@
 
 #include "types.hpp"
 
-#define CGLTF_MALLOC(size) utils::aligned_alloc_16(size)
-#define CGLTF_FREE(ptr) utils::aligned_free_16(ptr)
-
 #define STBDS_REALLOC(context, ptr, size) utils::aligned_realloc_16(ptr, size)
 #define STBDS_FREE(context, ptr) utils::aligned_free_16(ptr)
 
