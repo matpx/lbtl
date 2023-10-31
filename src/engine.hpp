@@ -144,6 +144,36 @@ struct [[nodiscard]] Result {
   operator bool() const { return _value; }
 };
 
+// optional
+
+template <typename T> struct [[nodiscard]] Optional {
+  T _value;
+  bool _has_value;
+
+  Optional() : _has_value(false), _value({}) {}
+  Optional(T value) : _has_value(true), _value(value) {}
+
+  operator bool() const { return _has_value; }
+
+  T get() const {
+    LOG_ASSERT(_has_value);
+    return _value;
+  }
+};
+
+// array
+
+template <typename T, usize N> struct Array {
+  T _data[N];
+
+  constexpr static usize SIZE = N;
+
+  constexpr T &operator[](const usize i) {
+    LOG_ASSERT(i < N);
+    return _data[i];
+  }
+};
+
 // std_ds wrapper
 
 template <typename T> struct DSArray {
