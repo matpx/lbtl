@@ -1,27 +1,12 @@
 #pragma once
 
 #include "components.hpp"
+#include "prefab.hpp"
 #include "renderer.hpp"
 #include "thirdparty/flecs/flecs.h"
 
+
 namespace world {
-
-struct Prefab {
-  struct Node {
-    comps::Transform transform;
-
-    bool has_mesh = false;
-    comps::Mesh mesh;
-  };
-
-  comps::MeshBuffer meshbuffer = {};
-  Node *nodes = nullptr;
-
-  void release() {
-    renderer::release_meshbuffer(meshbuffer);
-    arrfree(nodes);
-  }
-};
 
 struct World : public flecs::world {
 
@@ -40,7 +25,7 @@ struct World : public flecs::world {
 
   void update();
 
-  [[nodiscard]] flecs::entity instantiate(const utils::NonOwner<Prefab> &prefab);
+  [[nodiscard]] flecs::entity instantiate(const utils::NonOwner<assets::Prefab> &prefab);
 };
 
 extern World main;

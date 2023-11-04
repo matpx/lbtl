@@ -1,13 +1,13 @@
 #include "assets.hpp"
 #include "engine.hpp"
 #include "renderer.hpp"
-#include "src/world.hpp"
+#include "world.hpp"
 #include "thirdparty/cgltf/cgltf.h"
 #include <limits>
 
 namespace assets {
 
-utils::DSArray<utils::Owner<world::Prefab>> prefabs;
+utils::DSArray<utils::Owner<assets::Prefab>> prefabs;
 
 utils::Result parse_prim(const cgltf_primitive &gltf_prim, utils::DSArray<comps::MeshBuffer::Vertex> &vertices,
                          utils::DSArray<comps::MeshBuffer::IndexType> &indices, comps::Mesh &out_mesh) {
@@ -96,7 +96,7 @@ utils::Result parse_prim(const cgltf_primitive &gltf_prim, utils::DSArray<comps:
   return utils::Result::ok();
 }
 
-world::Prefab::Node parse_node(const cgltf_node *gltf_node, utils::DSStringMap<comps::Mesh> &mesh_map) {
+assets::Prefab::Node parse_node(const cgltf_node *gltf_node, utils::DSStringMap<comps::Mesh> &mesh_map) {
   comps::Transform transform = {};
 
   if (gltf_node->has_translation) {
@@ -108,7 +108,7 @@ world::Prefab::Node parse_node(const cgltf_node *gltf_node, utils::DSStringMap<c
         HMM_Q(gltf_node->rotation[0], gltf_node->rotation[1], gltf_node->rotation[2], gltf_node->rotation[3]);
   }
 
-  world::Prefab::Node node = {
+  assets::Prefab::Node node = {
       .transform = transform,
   };
 
@@ -124,7 +124,7 @@ world::Prefab::Node parse_node(const cgltf_node *gltf_node, utils::DSStringMap<c
   return node;
 }
 
-utils::Result load_model(const c8 *path, utils::NonOwner<world::Prefab> &out_prefab) {
+utils::Result load_model(const c8 *path, utils::NonOwner<assets::Prefab> &out_prefab) {
   out_prefab.reset();
 
   cgltf_options options = {};
@@ -168,7 +168,7 @@ utils::Result load_model(const c8 *path, utils::NonOwner<world::Prefab> &out_pre
 
   vertices.release();
   indices.release();
-  utils::Owner<world::Prefab> prefab = utils::Owner<world::Prefab>::make();
+  utils::Owner<assets::Prefab> prefab = utils::Owner<assets::Prefab>::make();
 
   prefab->meshbuffer = meshbuffer;
 
@@ -179,7 +179,7 @@ utils::Result load_model(const c8 *path, utils::NonOwner<world::Prefab> &out_pre
   mesh_map.release();
   cgltf_free(data);
 
-  out_prefab = utils::NonOwner<world::Prefab>(prefab);
+  out_prefab = utils::NonOwner<assets::Prefab>(prefab);
 
   prefabs.emplace_back(std::move(prefab));
 
@@ -188,7 +188,7 @@ utils::Result load_model(const c8 *path, utils::NonOwner<world::Prefab> &out_pre
 
 void finish() {
   for (usize i_prefab = 0; i_prefab < prefabs.size(); i_prefab++) {
-    utils::Owner<world::Prefab> &prefab = prefabs[i_prefab];
+    utils::Owner<assets::Prefab> &prefab = prefabs[i_prefab];
 
     prefab->release();
     prefab.release();

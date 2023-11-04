@@ -1,5 +1,5 @@
 #include "renderer.hpp"
-#include "src/thirdparty/HandmadeMath/HandmadeMath.h"
+#include "thirdparty/HandmadeMath/HandmadeMath.h"
 #include "thirdparty/sokol/sokol_app.h"
 #include "thirdparty/sokol/sokol_glue.h"
 #include "thirdparty/sokol/sokol_log.h"

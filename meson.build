@@ -32,6 +32,8 @@ executable(
         'src/player.hpp',
         'src/world.cpp',
         'src/world.hpp',
+        'src/prefab.cpp',
+        'src/prefab.hpp',
         'src/assets.cpp',
         'src/assets.hpp',
         'src/thirdparty/flecs/flecs.h',

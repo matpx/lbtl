@@ -1,8 +1,8 @@
 #include "physics.hpp"
 #include "reactphysics3d/engine/PhysicsCommon.h"
-#include "src/components.hpp"
-#include "src/thirdparty/HandmadeMath/HandmadeMath.h"
-#include "src/world.hpp"
+#include "components.hpp"
+#include "thirdparty/HandmadeMath/HandmadeMath.h"
+#include "world.hpp"
 
 namespace physics {
 

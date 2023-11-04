@@ -1,11 +1,11 @@
 #include "player.hpp"
 #include "assets.hpp"
 #include "components.hpp"
-#include "src/engine.hpp"
-#include "src/input.hpp"
-#include "src/physics.hpp"
-#include "src/renderer.hpp"
-#include "src/thirdparty/flecs/flecs.h"
+#include "engine.hpp"
+#include "input.hpp"
+#include "physics.hpp"
+#include "renderer.hpp"
+#include "thirdparty/flecs/flecs.h"
 #include <reactphysics3d/mathematics/Quaternion.h>
 #include <reactphysics3d/mathematics/Vector3.h>
 
@@ -28,7 +28,7 @@ void init() {
 
   world::main.camera = player_head;
 
-  utils::NonOwner<world::Prefab> prefab;
+  utils::NonOwner<assets::Prefab> prefab;
 
   if (assets::load_model("./assets/glb/ships.glb", prefab)) {
     flecs::entity space_ship = world::main.instantiate(prefab);

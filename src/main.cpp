@@ -1,8 +1,8 @@
 #include "engine.hpp"
-#include "src/assets.hpp"
-#include "src/input.hpp"
-#include "src/physics.hpp"
-#include "src/player.hpp"
+#include "assets.hpp"
+#include "input.hpp"
+#include "physics.hpp"
+#include "player.hpp"
 #include "thirdparty/sokol/sokol_log.h"
 
 static void init(void) {

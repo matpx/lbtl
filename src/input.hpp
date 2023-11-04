@@ -1,7 +1,7 @@
 #pragma once
 
 #include "linalg.hpp"
-#include "src/thirdparty/HandmadeMath/HandmadeMath.h"
+#include "thirdparty/HandmadeMath/HandmadeMath.h"
 #include "thirdparty/sokol/sokol_app.h"
 
 namespace input {
