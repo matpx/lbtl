@@ -1,8 +1,8 @@
 #include "assets.hpp"
 #include "engine.hpp"
 #include "renderer.hpp"
-#include "world.hpp"
 #include "thirdparty/cgltf/cgltf.h"
+#include "world.hpp"
 #include <limits>
 
 namespace assets {
@@ -173,7 +173,7 @@ utils::Result load_model(const c8 *path, utils::NonOwner<assets::Prefab> &out_pr
   prefab->meshbuffer = meshbuffer;
 
   for (cgltf_size i_node = 0; i_node < data->scene->nodes_count; i_node++) {
-    arrpush(prefab->nodes, parse_node(data->scene->nodes[i_node], mesh_map));
+    prefab->nodes.emplace_back(parse_node(data->scene->nodes[i_node], mesh_map));
   }
 
   mesh_map.release();

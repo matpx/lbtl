@@ -23,7 +23,7 @@ flecs::entity World::instantiate(const utils::NonOwner<assets::Prefab> &prefab) 
 
   const flecs::entity base = entity().set(prefab->meshbuffer);
 
-  for (i32 i_node = 0; i_node < arrlen(prefab->nodes); i_node++) {
+  for (i32 i_node = 0; i_node < prefab->nodes.size(); i_node++) {
     const assets::Prefab::Node &node = prefab->nodes[i_node];
 
     flecs::entity prefab_entity = entity().set(node.transform).child_of(prefab_root);

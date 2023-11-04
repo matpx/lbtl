@@ -13,7 +13,7 @@ struct Prefab {
   };
 
   comps::MeshBuffer meshbuffer = {};
-  Node *nodes = nullptr;
+  utils::DSArray<Node> nodes;
 
   void release();
 };

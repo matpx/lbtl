@@ -5,7 +5,7 @@ namespace assets {
 
 void Prefab::release() {
   renderer::release_meshbuffer(meshbuffer);
-  arrfree(nodes);
+  nodes.release();
 }
 
 } // namespace assets
