@@ -4,7 +4,6 @@
 #include "linalg.hpp"
 #include "thirdparty/stb/stb_ds.h"
 #include "types.hpp"
-#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <utility>
@@ -14,7 +13,11 @@
 // TODO rename logging macros
 
 #define LOG_ASSERT(CONDITION)                                                                                          \
-  { assert(CONDITION); }
+  {                                                                                                                    \
+    if (!(CONDITION)) {                                                                                                \
+      LOG_PANIC("[%s:%d] Assertion failed", __FILE__, __LINE__);                                                       \
+    }                                                                                                                  \
+  }
 
 #ifndef NDEBUG
 #define LOG_DEBUG(...)                                                                                                 \
