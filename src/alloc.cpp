@@ -59,7 +59,7 @@ void *aligned_realloc_16(void *old_memory, usize size) {
   void *new_memory = nullptr;
 
   if (size != 0) {
-    new_memory = general_alloc(size);
+    new_memory = aligned_alloc_16(size);
 
     if (old_memory) {
       const usize copy_size = std::min(malloc_usable_size(old_memory), size);
@@ -67,7 +67,7 @@ void *aligned_realloc_16(void *old_memory, usize size) {
       memcpy(new_memory, old_memory, copy_size);
     }
   }
-  general_free(old_memory);
+  aligned_free_16(old_memory);
 
   return new_memory;
 #endif
